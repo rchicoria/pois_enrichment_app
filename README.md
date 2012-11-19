@@ -1,2 +1,2 @@
-pois_enrichment_app
+POIs enrichment app
 ===================
