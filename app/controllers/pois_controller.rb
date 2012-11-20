@@ -8,11 +8,15 @@ class PoisController < ApplicationController
 		@district = Integer(params[:district]) if params[:district] && Integer(params[:district])
 		@category = Integer(params[:category]) if params[:category] && Integer(params[:category])
 		@pois = []
-		Category.get_ond_category[@category][:ost].each do |id|
-			if @district == 0
-				Poi.find_by(:category=>id).each { |poi| @pois << poi }
-			else
-				Poi.find_by(:district=>@district, :category=>id).each { |poi| @pois << poi }
+		if params[:s]
+			@pois = Poi.find_by(:name=>params[:s])
+		else
+			Category.get_ond_category[@category][:ost].each do |id|
+				if @district == 0
+					Poi.find_by(:category=>id).each { |poi| @pois << poi }
+				else
+					Poi.find_by(:district=>@district, :category=>id).each { |poi| @pois << poi }
+				end
 			end
 		end
 		@districts = District.all

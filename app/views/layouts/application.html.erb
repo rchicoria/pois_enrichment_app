@@ -48,8 +48,19 @@
 			</li>
 		</ul>
 		<ul class="menu" style="float: right">
-			<li class="option">
-				<a class="option" href="#"><i class="icon-search icon-white"></i></a>
+			<li id="search" class="dropdown option">
+				<a class="dropdown-toggle option" href="#" data-toggle="dropdown">
+					<i class="icon-search icon-white"></i>
+					<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu" style="margin-left: -200px">
+					<li>
+						<form class="form-search" style="margin: 5px 10px 5px 10px; width: 240px">
+							<input name="s" id="s" type="text" placeholder="Search..." class="input-medium search-query" style="width: 180px">
+							<button type="submit" class="btn">Go</button>
+						</form>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>
