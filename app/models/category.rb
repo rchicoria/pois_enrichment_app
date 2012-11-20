@@ -20,6 +20,14 @@ class Category < AppModel
                 {:name => "Todos...", :ost => []}
               ]
   def self.get_ond_category
+    if CATEGORIES[0][:ost].length == 0
+      (1..7).each do |i|
+        CATEGORIES[i][:ost].each do |id|
+          CATEGORIES[0][:ost] << id
+          CATEGORIES[8][:ost] << id
+        end
+      end
+    end
     return CATEGORIES
   end
 

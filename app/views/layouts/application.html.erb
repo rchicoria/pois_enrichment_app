@@ -18,7 +18,8 @@
 			</li>
 			<li id="local" class="dropdown option">
 				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-					<%= District.find(@district).name %>
+					<%= District.find(@district).name unless @district == 0 %>
+					<% if @district == 0 %>PORTUGAL<% end %>
 					<b class="caret"></b>
 				</a>
 				<ul class="dropdown-menu">

@@ -9,8 +9,10 @@ class PoisController < ApplicationController
 		@category = Integer(params[:category]) if params[:category] && Integer(params[:category])
 		@pois = []
 		Category.get_ond_category[@category][:ost].each do |id|
-			Poi.find_by(:district=>@district, :category=>id).each do |poi|
-				@pois << poi
+			if @district == 0
+				Poi.find_by(:category=>id).each { |poi| @pois << poi }
+			else
+				Poi.find_by(:district=>@district, :category=>id).each { |poi| @pois << poi }
 			end
 		end
 		@districts = District.all
