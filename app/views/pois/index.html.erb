@@ -1,0 +1,15 @@
+<h1>Listing POIS</h1>
+ 
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Category</th>
+  </tr>
+ 
+<% @pois.each do |poi| %>
+  <tr>
+    <td><%= poi.name %></td>
+    <td><%= poi.categories[0].name %></td>
+  </tr>
+<% end %>
+</table>
