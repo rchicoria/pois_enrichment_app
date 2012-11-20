@@ -25,6 +25,7 @@ gem 'jquery-rails'
 gem 'rest-client'
 gem 'rgeo'
 gem 'rgeo-geojson'
+gem 'nokogiri'
 
 
 # To use ActiveModel has_secure_password

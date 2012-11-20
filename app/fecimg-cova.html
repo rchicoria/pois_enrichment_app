@@ -1,0 +1,705 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Pesquisa por Restaurantes, Lifecooler</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<link href="@pics/sitios.ico" type="text/css" rel="shortcut icon" />
+<link rel="stylesheet" href="@css/estilos.css" type="text/css" />
+<!--[if IE 6]>
+<link rel="stylesheet" href="@css/ie6.css" type="text/css" />
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" href="@css/ie7.css" type="text/css" />
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" href="@css/ie8.css" type="text/css" />
+<![endif]-->
+<script type="text/javascript" language="JavaScript" src="@jscript/jscript.js"></script>
+<script type="text/javascript" src="@jscript/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="@jscript/jquery-ui-1.8.21.custom.min.js"></script>
+<script>
+    $(function () {
+    $("#accordion").accordion({ autoHeight: false });
+    //$("#accordion").accordion({ active: 6 });//escolher tab aberta 0-6
+});
+	</script>
+<!--[if lte IE 7]>
+    <style type="text/css">
+        #orange-sidebar > #accordion > div > .lcol,#orange-sidebar > #accordion > div > .rcol {
+            display: inline;
+        }
+    </style>
+    <script type="text/javascript">
+    $(function() {
+		$("#accordion").accordion({ animated : false });
+	});
+	</script>
+<![endif]-->
+
+</head>
+<body>
+<script type="text/javascript">
+var vconcelhos;
+
+vconcelhos=[14,1,'Abrantes','15',1,1,'Águeda','19',9,1,'Aguiar da Beira','3',7,1,'Alandroal','9',1,2,'Albergaria-a-Velha','4',8,1,'Albufeira','72',15,1,'Alcácer do Sal','19',14,2,'Alcanena','6',10,1,'Alcobaça','21',15,2,'Alcochete','19',8,2,'Alcoutim','13',11,1,'Alenquer','9',4,1,'Alfândega da Fé','1',17,1,'Alijó','8',8,3,'Aljezur','19',2,1,'Aljustrel','5',15,3,'Almada','66',9,2,'Almeida','9',14,3,'Almeirim','11',2,2,'Almodôvar','13',14,4,'Alpiarça','5',12,1,'Alter do Chão','5',10,2,'Alvaiázere','1',2,3,'Alvito','10',11,15,'Amadora','12',13,1,'Amarante','13',3,1,'Amares','12',1,3,'Anadia','23',43,1,'Angra do Heroísmo','38',10,3,'Ansião','2',16,1,'Arcos de Valdevez','9',6,1,'Arganil','5',18,1,'Armamar','1',1,4,'Arouca','9',7,2,'Arraiolos','9',12,2,'Arronches','1',11,2,'Arruda dos Vinhos','3',1,5,'Aveiro','35',12,3,'Avis','8',11,3,'Azambuja','2',13,2,'Baião','3',3,2,'Barcelos','10',2,4,'Barrancos','3',15,4,'Barreiro','24',10,4,'Batalha','12',2,5,'Beja','29',5,1,'Belmonte','4',14,5,'Benavente','8',10,5,'Bombarral','5',7,3,'Borba','7',17,2,'Boticas','5',3,3,'Braga','50',4,2,'Bragança','15',3,4,'Cabeceiras de Basto','4',11,4,'Cadaval','2',10,6,'Caldas da Rainha','32',31,1,'Calheta (Madeira)','8',45,1,'Calheta (São Jorge)','3',31,2,'Câmara de Lobos','9',16,2,'Caminha','28',12,4,'Campo Maior','11',6,2,'Cantanhede','6',4,3,'Carrazeda de Ansiães','3',18,2,'Carregal do Sal','3',14,6,'Cartaxo','35',11,5,'Cascais','214',10,7,'Castanheira de Pêra','2',5,2,'Castelo Branco','18',1,6,'Castelo de Paiva','5',12,5,'Castelo de Vide','8',18,3,'Castro Daire','5',8,4,'Castro Marim','20',2,6,'Castro Verde','20',9,3,'Celorico da Beira','12',3,5,'Celorico de Basto','2',14,7,'Chamusca','2',17,3,'Chaves','16',18,4,'Cinfães','3',6,3,'Coimbra','94',6,4,'Condeixa-a-Nova','5',14,8,'Constância','5',14,9,'Coruche','7',49,1,'Corvo','1',5,3,'Covilhã','22',12,6,'Crato','2',2,7,'Cuba','6',12,7,'Elvas','14',14,10,'Entroncamento','3',1,7,'Espinho','13',3,6,'Esposende','14',1,8,'Estarreja','3',7,4,'Estremoz','21',7,5,'Évora','53',3,7,'Fafe','5',8,5,'Faro','52',13,3,'Felgueiras','7',2,8,'Ferreira do Alentejo','4',14,11,'Ferreira do Zêzere','4',6,5,'Figueira da Foz','24',9,4,'Figueira de Castelo Rodrigo','5',10,8,'Figueiró dos Vinhos','7',9,5,'Fornos de Algodres','3',12,8,'Fronteira','3',31,3,'Funchal','128',5,4,'Fundão','17',12,9,'Gavião','2',6,6,'Góis','3',14,12,'Golegã','14',13,4,'Gondomar','14',9,6,'Gouveia','10',15,5,'Grândola','43',9,7,'Guarda','32',3,8,'Guimarães','38',47,1,'Horta','22',5,5,'Idanha-a-Nova','11',1,10,'Ílhavo','12',8,6,'Lagoa (Algarve)','46',42,1,'Lagoa (São Miguel)','10',8,7,'Lagos','57',48,1,'Lajes das Flores','6',46,1,'Lajes do Pico','5',18,5,'Lamego','4',10,9,'Leiria','39',11,6,'Lisboa','1058',8,8,'Loulé','140',11,7,'Loures','15',11,8,'Lourinhã','7',6,7,'Lousã','12',13,5,'Lousada','7',14,13,'Mação','4',4,5,'Macedo de Cavaleiros','8',31,4,'Machico','7',46,2,'Madalena','5',11,9,'Mafra','47',13,6,'Maia','32',18,6,'Mangualde','5',9,8,'Manteigas','6',13,7,'Marco de Canaveses','2',10,10,'Marinha Grande','18',12,10,'Marvão','10',13,8,'Matosinhos','107',1,11,'Mealhada','21',9,9,'Meda','3',16,3,'Melgaço','10',2,9,'Mértola','16',17,4,'Mesão Frio','2',6,8,'Mira','6',6,9,'Miranda do Corvo','4',4,6,'Miranda do Douro','7',4,7,'Mirandela','7',4,8,'Mogadouro','2',15,6,'Moita','19',16,4,'Monção','10',8,9,'Monchique','12',4,9,'Moncorvo','4',17,5,'Mondim de Basto','2',12,11,'Monforte','2',17,6,'Montalegre','14',7,6,'Montemor-o-Novo','14',6,10,'Montemor-o-Velho','7',15,7,'Montijo','24',7,7,'Mora','7',18,8,'Mortágua','3',2,10,'Moura','8',7,8,'Mourão','3',1,12,'Murtosa','6',10,11,'Nazaré','24',18,9,'Nelas','10',12,12,'Nisa','7',42,2,'Nordeste','9',10,12,'Óbidos','14',2,11,'Odemira','27',11,16,'Odivelas','23',11,10,'Oeiras','113',5,6,'Oleiros','1',8,10,'Olhão','18',1,13,'Oliveira de Azeméis','10',18,10,'Oliveira de Frades','3',1,14,'Oliveira do Bairro','4',6,11,'Oliveira do Hospital','16',14,21,'Ourém','13',2,12,'Ourique','2',1,15,'Ovar','26',13,9,'Paços de Ferreira','5',15,8,'Palmela','24',6,12,'Pampilhosa da Serra','1',13,10,'Paredes','3',16,5,'Paredes de Coura','3',10,13,'Pedrógão Grande','3',6,13,'Penacova','1',13,11,'Penafiel','6',18,11,'Penalva do Castelo','5',5,7,'Penamacor','7',18,12,'Penedono','1',6,14,'Penela','3',10,14,'Peniche','16',17,8,'Peso da Régua','9',9,10,'Pinhel','3',10,15,'Pombal','9',42,3,'Ponta Delgada','67',31,5,'Ponta do Sol','2',16,6,'Ponte da Barca','6',16,7,'Ponte de Lima','15',12,13,'Ponte de Sor','8',12,14,'Portalegre','25',7,9,'Portel','4',8,11,'Portimão','57',13,12,'Porto','275',10,16,'Porto de Mós','10',31,6,'Porto Moniz','6',32,1,'Porto Santo','14',3,9,'Póvoa de Lanhoso','6',13,13,'Póvoa de Varzim','13',42,4,'Povoação','7',43,2,'Praia da Vitória','13',5,8,'Proença-a-Nova','4',7,10,'Redondo','9',7,11,'Reguengos de Monsaraz','23',31,7,'Ribeira Brava','5',17,9,'Ribeira de Pena','1',42,5,'Ribeira Grande','13',14,14,'Rio Maior','15',17,10,'Sabrosa','3',9,11,'Sabugal','20',14,15,'Salvaterra de Magos','8',18,14,'Santa Comba Dão','3',31,8,'Santa Cruz','16',44,1,'Santa Cruz da Graciosa','8',48,2,'Santa Cruz das Flores','3',1,9,'Santa Maria da Feira','11',17,11,'Santa Marta de Penaguião','2',31,9,'Santana','4',14,16,'Santarém','30',15,9,'Santiago do Cacém','12',13,14,'Santo Tirso','6',8,12,'São Brás de Alportel','9',1,16,'São João da Madeira','6',18,15,'São João da Pesqueira','4',18,16,'São Pedro do Sul','4',46,3,'São Roque do Pico','8',31,10,'São Vicente','3',14,17,'Sardoal','2',18,17,'Sátão','2',9,12,'Seia','23',15,10,'Seixal','23',18,18,'Sernancelhe','3',2,13,'Serpa','11',5,9,'Sertã','9',15,11,'Sesimbra','47',15,12,'Setúbal','68',1,17,'Sever do Vouga','3',8,13,'Silves','33',15,13,'Sines','18',11,11,'Sintra','117',11,12,'Sobral Monte Agraço','2',12,15,'Sousel','3',6,16,'Tábua','2',18,19,'Tabuaço','2',18,20,'Tarouca','3',8,14,'Tavira','54',3,10,'Terras de Bouro','7',14,18,'Tomar','7',18,21,'Tondela','5',14,19,'Torres Novas','3',11,13,'Torres Vedras','22',9,13,'Trancoso','5',13,18,'Trofa','1',1,18,'Vagos','2',1,19,'Vale de Cambra','4',16,8,'Valença','10',13,15,'Valongo','7',17,12,'Valpaços','3',45,2,'Velas','10',7,12,'Vendas Novas','6',7,13,'Viana do Alentejo','6',16,9,'Viana do Castelo','83',2,14,'Vidigueira','10',3,11,'Vieira do Minho','5',5,10,'Vila de Rei','2',8,15,'Vila do Bispo','24',13,16,'Vila do Conde','14',41,1,'Vila do Porto','11',4,10,'Vila Flor','2',11,14,'Vila Franca de Xira','15',42,6,'Vila Franca do Campo','6',14,20,'Vila Nova da Barquinha','3',16,10,'Vila Nova de Cerveira','9',3,12,'Vila Nova de Famalicão','17',9,14,'Vila Nova de Foz Côa','6',13,17,'Vila Nova de Gaia','59',18,22,'Vila Nova de Paiva','2',6,17,'Vila Nova de Poiares','2',17,13,'Vila Pouca de Aguiar','3',17,14,'Vila Real','23',8,16,'Vila Real de Santo António','37',5,11,'Vila Velha de Rodão','4',3,13,'Vila Verde','10',7,14,'Vila Viçosa','10',4,12,'Vinhais','2',18,23,'Viseu','27',3,14,'Vizela','6',18,24,'Vouzela','6',0];
+</script>
+<div id="pagewidth">
+	
+<div id="header">
+
+<div id="idioma"><a href="http://es.lifecooler.com" target="_blank" title="Lifecooler Español"><img border="0" src="@pics/flag_es.gif" alt="Lifecooler Español" /></a><a href="http://en.lifecooler.com" target="_blank" title="Lifecooler English"><img border="0" src="@pics/flag_en.gif" alt="Lifecooler English" /></a></div>
+	<div style="cursor:pointer;" onclick="go('http://www.lifecooler.com/edicoes/lifecooler/index.asp');" title="Home">
+		<h1>Lifecooler - O Guia da Boa Vida</h1>
+	</div>
+	<div style="position:absolute; left:33px; top:100px; width:170px; height:20px; cursor:pointer;" onClick="go('http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=6766&amp;rev=2');" title="O site de Turismo mais visitado"></div>
+	
+    <div id="form_pesquisa2">
+        <div id="pesquisa_newsletter">
+			<fieldset>
+				<legend class="hide-me">Newsletter</legend>
+				<input class="input-text" type="text" name="email" id="email" onfocus="this.value='';" value="coloque aqui o seu email" />
+				<input class="input-button" type="submit" value="" onclick="onblur_email('http://www.lifecooler.com/edicoes/lifecooler/','email','48');" />
+			</fieldset>
+		</div>
+        <div id="loja" style="cursor:pointer;" onclick="go('loja.asp?cat=583');"></div>
+        <div id="pesquisa_google">
+		    <form action="pesquisa.asp" id="PesquisaGoogle">
+			    <fieldset>
+				    <legend class="hide-me">Pesquisa no Lifecooler como no Google</legend>
+				    <!--<input class="input-text" type="text" name="keywords" />
+				    <input class="input-button" type="submit" value="" />-->
+				    <!-- Google CSE Search Box Begins  -->
+				    <input type="hidden" name="ie" value="ISO-8859-1" /> 
+				    <input type="hidden" name="oe" value="ISO-8859-1" />
+				    <input type="hidden" name="cx" value="004754237022889553512:j5gek5pz5lw" />
+				    <input type="hidden" name="cof" value="FORID:11" />
+				    <input class="input-text" type="text" name="q" />
+				    <input class="input-button" name="sa" type="submit" value="" />
+				    <!-- Google CSE Search Box Ends -->
+			    </fieldset>
+		    </form>
+		</div>
+		<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=searchbox_004754237022889553512%3Aj5gek5pz5lw&amp;lang=pt"></script>
+    </div>
+
+</div>
+	<div id="wrapper" class="clearfix" > 
+		<div id="twocols" class="clearfix"> 
+			<div id="maincol">
+<form name="fmPesquisa" id="fmPesquisa" method="post" action="restaurantes.asp?cat=19&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante">
+<div class="col_int_esq">
+
+
+
+<h2 class="pesquisa_tn mb0">Resultados de Pesquisa</h2>
+	<h3 class="sc">Guia de Restaurantes</h3>
+
+	<div class="n_res">
+        <span class="resultados">Existem 191 resultados para a sua pesquisa.</span>
+        <span class="vap"><img src="@pics/li_lista_tematica.gif" alt="voltar à pesquisa" /><a href="staticRedirect.asp?id=3002">voltar à pesquisa</a></span>
+    </div>
+
+	<div class="rpl pd0">
+        <div class="head_rpl">
+            <span class="rpln"><a href="restaurantes.asp?pag=1&amp;ordem=1&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante">Nome</a></span>
+            <span class="rplt"><a href="restaurantes.asp?pag=1&amp;ordem=2&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante">Tipo</a></span>
+            <span><a href="restaurantes.asp?pag=1&amp;ordem=3&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante">Distrito</a></span>
+        </div>
+    </div> 
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/AzenhaVelha">Azenha Velha</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/BeFadoCoimbra">Be Fado Coimbra</a></span>
+        <span class="rpl_tipo">Casas de Fado</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/CervejariaMarisqueiraPolar">Cervejaria Marisqueira Polar</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/MarisqueiraPracadoMarisco">Marisqueira Pra&#231;a do Marisco</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/OlaiasRestauranteeCaffe">Olaias - Restaurante e Caffe</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/PalheiraoBar">Palheir&#227;o Bar</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/PastaCaffeDolceVitaCoimbra">Pasta Caff&#233; - Dolce Vita Coimbra</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/PizzariaSantaClara">Pizzaria Santa Clara</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RealRestauranteBar">Real Restaurante Bar</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteABatina">Restaurante A Batina</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteACave">Restaurante A Cave</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteAMoagem@2">Restaurante A Moagem</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteAPeroladoOceano">Restaurante A P&#233;rola do Oceano</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteAPonte@2">Restaurante A Ponte</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteAPortuguesa">Restaurante A Portuguesa</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        <img src="@pics/simbolo_discountbook.png" alt="discountbook" />
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteASalina">Restaurante A Salina</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteASede">Restaurante A Sede</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteASereia">Restaurante A Sereia</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteATaberna">Restaurante A Taberna</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        
+    </div>
+
+	<div class="lista_proc">
+        <span class="rpl_nome"><a href="../../Portugal/Restaurantes/RestauranteATrancadaBarriga">Restaurante A Tranca da Barriga</a></span>
+        <span class="rpl_tipo">Restaurantes</span>
+        <span class="rpl_cidade">Coimbra</span>
+        <span class="link_reportagem"><img src="@pics/repo.png" alt="reportagem" /><a href="../../Portugal/Restaurantes/RestauranteATrancadaBarriga">reportagem</a></span>
+    </div>
+<div class="adwordspub"><script type="text/javascript"><!--
+google_ad_client = "pub-9729818362640468";
+/* 336x280, criado 21-01-2011 Pesq1 */
+google_ad_slot = "8339003381";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+	<div class="breadcrumb jc">
+
+		<span class="current">1</span>
+
+		<a href="restaurantes.asp?pag=2&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante&amp;ordem=" title="2">2</a>
+
+		<a href="restaurantes.asp?pag=3&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante&amp;ordem=" title="3">3</a>
+
+		<a href="restaurantes.asp?pag=4&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante&amp;ordem=" title="4">4</a>
+
+		<a href="#" class="lmais" onclick="go('restaurantes.asp?pag=2&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante&amp;ordem=');" title="seguinte">&gt;</a>		
+
+		<a href="#" class="lmais" onclick="go('restaurantes.asp?pag=5&amp;tipoLocal=d&amp;distrito=6&amp;funcao=PesqRestaurante&amp;ordem=');" title="seguintes">&gt;&gt;</a>
+
+
+	</div>
+
+		<br /><br />
+
+</div> 
+<div class="col_int_dir">
+<h2>Já Conhece?</h2>
+
+<ul>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=6785&amp;rev=2" target="_top">Restaurante Come Prima</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=6785&amp;rev=2" target="_top"><img src="/Edicoes/imagens/@artigos/6785_14.JPG" alt="Restaurante Come Prima" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=6785&amp;rev=2" target="_top">Nepalês conquista Lisboa com sabores de Itália</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15524&amp;rev=2" target="_top">Restaurante Cova da Beira do Hotel dos Carqueijais &#8211; Serra da Estrela</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15524&amp;rev=2" target="_top"><img src="/Edicoes/imagens/@artigos/15524_14.JPG" alt="Restaurante Cova da Beira do Hotel dos Carqueijais &#8211; Serra da Estrela" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15524&amp;rev=2" target="_top">Novos sabores da montanha</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15539&amp;rev=2" target="_top">Menus da esta&#231;&#227;o</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15539&amp;rev=2" target="_top"><img src="/Edicoes/imagens/@artigos/15539_14.JPG" alt="Menus da esta&#231;&#227;o" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15539&amp;rev=2" target="_top">Caça, cogumelos, chícharo e cachola à prova</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15541&amp;rev=2" target="_top">Semana 47/12 - Semana dos Produtos da &#201;poca</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15541&amp;rev=2" target="_top"><img src="/Edicoes/imagens/@artigos/15541_14.JPG" alt="Semana 47/12 - Semana dos Produtos da &#201;poca" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=15541&amp;rev=2" target="_top">Deleite e de mel</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=417992" target="_top">Bistr&#244; Trigo Latino</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=417992" target="_top"><img src="http://www.lifecooler.com/lifecooler/imagens/bd_cartao/CVP_FR937.jpg" alt="Bistr&#244; Trigo Latino" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=417992" target="_top">Com cozinha latina de fusão e preços acessíveis, o...</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=426618" target="_top">Casa Nepalesa</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=426618" target="_top"><img src="http://www.lifecooler.com/lifecooler/imagens/bd_cartao/CVP_FR894.jpg" alt="Casa Nepalesa" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=426618" target="_top">Do mesmo dono do restaurante Come Prima, a Casa Ne...</a></span>
+        </div>
+    </li>
+
+    <li>
+        <span class="tl_dr"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=433299" target="_top">Vinho Sem Princ&#237;pio</a></span>
+        <a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=433299" target="_top"><img src="http://www.lifecooler.com/lifecooler/imagens/bd_cartao/CVP_FR955.jpg" alt="Vinho Sem Princ&#237;pio" width="110" /></a>
+        <div>
+            <span class="inside_jc"><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?reg=433299" target="_top">Petiscos típicos portugueses muito acessíveis e de...</a></span>
+        </div>
+    </li>
+
+</ul>
+<div style="margin: 0 0 0 13px;"><script type="text/javascript"><!--
+google_ad_client = "pub-9729818362640468";
+/* jaconhece */
+google_ad_slot = "9568485603";
+google_ad_width = 120;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div></div>
+
+<input type="hidden" name="funcao" id="funcao" />
+</form>
+			</div>
+			
+
+<div id="rightcol" > <!--a href="#"><img src="@pics/coolgift.png" alt="Coolgift" class="banner_direita_um" /></a-->
+
+<div id="banner_direita_dois">
+
+	<!--JavaScript Tag with group ID // Tag for network 1100: Sitios_Lifecooler // Website: lifecooler // Page: LIFECOOLER - Restaurantes // Placement: Restaurantes - dynamic (3153496) // created at: May 4, 2012 11:47:56 AM-->
+    <script language="javascript">
+    <!--
+        if (window.adgroupid == undefined) {
+            window.adgroupid = Math.round(Math.random() * 1000);
+        }
+        document.write('<scr' + 'ipt language="javascript1.1" src="http://ad.dc2.adtech.de/addyn/3.0/1100/3153496/0/0/ADTECH;loc=100;target=_blank;grp=' + window.adgroupid + ';misc=' + new Date().getTime() + '"></scri' + 'pt>');
+    //-->
+    </script><noscript><a href="http://ad.dc2.adtech.de/adlink/3.0/1100/3153496/0/0/ADTECH;loc=300" target="_blank"><img src="http://ad.dc2.adtech.de/adserv/3.0/1100/3153496/0/0/ADTECH;loc=300" border="0" width="0" height="0"></a></noscript>
+    <!-- End of JavaScript Tag -->
+
+</div>
+
+<div style="margin-left:0px;margin-top:6px;">
+
+    <div id="orange-sidebar">
+	    <div id="orange-top"></div>
+	    <h2>LOJAS LIFECOOLER</h2>
+	    <div id="accordion">
+		    <h3 id="acc-descontos-do-dia">DESCONTOS DO DIA</h3>
+		    <div style="padding: 8px 0 8px 8px;">
+			    <object type="application/x-shockwave-flash" width="265" height="265" data="http://www.lifecooler-travel.com/descontos_novo.swf?clickTag=http%3A%2F%2Fwww.lifecooler-travel.com%2Fdescontosdodia.aspx%3Fafil%3D636">
+                    <param name="movie" value="http://www.lifecooler-travel.com/descontos_novo.swf?clickTag=http%3A%2F%2Fwww.lifecooler-travel.com%2Fdescontosdodia.aspx%3Fafil%3D636" />
+                    <param name="wmode" value="transparent" />
+                </object>
+		    </div>
+		    <h3 id="acc-hoteis">HOTÉIS</h3>
+		    <div>
+			    <div class="lcol">
+				    <a href="http://www.lifecooler-travel.com/hoteis.aspx" target="_blank"><img src="@pics/accordion/travel-logo.png" alt="Travel Lifecooler"/></a>
+			    </div><div class="rcol">
+				    <span>MAIS DE 500 HOTÉIS EM PORTUGAL AOS  MELHORES PREÇOS</span><a href="http://www.lifecooler-travel.com/hoteis.aspx" target="_blank">DESCUBRA JÁ</a>
+			    </div>
+		    </div>
+		    <h3 id="acc-restaurantes">RESTAURANTES</h3>
+		    <div>
+			    <div class="lcol">
+				    <a href="http://www.lifecooler-travel.com/restaurantes.aspx" target="_blank"><img src="@pics/accordion/travel-logo.png" alt="Travel Lifecooler"/></a>
+			    </div><div class="rcol">
+				    <span>OS MELHORES RESTAURANTES COM DESCONTO</span><a href="http://www.lifecooler-travel.com/restaurantes.aspx" target="_blank">DESCUBRA JÁ</a>
+			    </div>
+		    </div>
+		    <h3 id="acc-atividades">ATIVIDADES</h3>
+		    <div>
+			    <div class="lcol">
+				    <a href="http://www.lifecooler-travel.com/actividades.aspx" target="_blank"><img src="@pics/accordion/travel-logo.png" alt="Travel Lifecooler"/></a>
+			    </div><div class="rcol">
+				    <span>AS MELHORES ATIVIDADES DE DESCOBERTA E BEM-ESTAR</span><a href="http://www.lifecooler-travel.com/actividades.aspx" target="_blank">DESCUBRA JÁ</a>
+			    </div>
+		    </div>
+		    <h3 id="acc-prendas">PRENDAS</h3>
+		    <div>
+			    <div class="lcol">
+				    <a href="http://www.lifecooler.com/coolgift/index.aspx" target="_blank"><img src="@pics/accordion/prenda.jpg" alt="Coolgift"/></a>
+			    </div><div class="rcol">
+				    <span>OFEREÇA AS MELHORES EXPERIÊNCIAS DE PORTUGAL</span><a href="http://www.lifecooler.com/coolgift/index.aspx" target="_blank">DESCUBRA JÁ</a>
+			    </div>
+		    </div>
+		    <h3 id="acc-viagens">VIAGENS</h3>
+		    <div>
+			    <div class="lcol">
+				    <a href="http://www.chequehotel.pt/default.aspx" target="_blank"><img src="@pics/accordion/chequehotel.jpg" alt="Travel Lifecooler"/></a>
+			    </div><div class="rcol">
+				    <span>FÉRIAS LOW COST NO MUNDO INTEIRO</span><a href="http://www.chequehotel.pt/default.aspx" target="_blank">DESCUBRA JÁ</a>
+			    </div>
+		    </div>
+		    <h3 id="acc-edicoes">LIVROS</h3>
+		    <div id="acc-divedicoes">
+			    <span>OS MELHORES GUIAS TURÍSTICOS E LIVROS DE DESCONTO</span>
+			    <div class="lcol">
+				    <a href="loja.asp?cat=583"><img src="@pics/accordion/guialazer.jpg" alt="Guia de Lazer"/></a>
+				    <a id="acc-loja" href="loja.asp?cat=583" style="background-image: url(@pics/accordion/loja.png);padding-left: 5px;padding-right:5px;">LOJA</a>
+			    </div><div class="rcol">
+				    <a href="http://www.lifecooler.com/edicoes/discountBook/index.asp" target="_blank"><img src="@pics/accordion/discountbook.jpg" alt="Discount Book"/></a>
+				    <a href="http://www.lifecooler.com/edicoes/discountBook/index.asp" style="padding-left: 3px;padding-right:7px;" target="_blank">DISCOUNT BOOK</a>
+			    </div>
+		    </div>
+	    </div>
+	    <div id="orange-bottom"></div>
+    </div>
+
+</div>
+
+
+<div style="margin:6px; background-color:#ffffff; width:300px;">
+<object type="application/x-shockwave-flash" width="300" height="180" data="@pics/muito_low_Final.swf">
+	<param name="movie" value="@pics/muito_low_Final.swf" />
+	<param name=wmode value=transparent>
+</object>
+</div>
+
+
+<div style="margin:6px; width:300px;"">
+<!--JavaScript Tag // Tag for network 1100: Sitios_Lifecooler // Website: lifecooler // Page: Formatos diferentes - Lifecooler // Placement: FD - Lifecooler (3169183) // created at: Oct 25, 2012 3:43:09 PM-->
+<script language="javascript"><!--
+    document.write('<scr' + 'ipt language="javascript1.1" src="http://ad.dc2.adtech.de/addyn/3.0/1100/3169183/0/0/ADTECH;loc=100;target=_blank;grp=[group];misc=' + new Date().getTime() + ';rdclick="></scri' + 'pt>');
+//-->
+</script><noscript><a href="http://ad.dc2.adtech.de/adlink/3.0/1100/3169183/0/0/ADTECH;loc=300;grp=[group];rdclick=" target="_blank"><img src="http://ad.dc2.adtech.de/adserv/3.0/1100/3169183/0/0/ADTECH;loc=300;grp=[group]" border="0" width="0" height="0"></a></noscript>
+<!-- End of JavaScript Tag -->
+</div>
+
+
+
+<div class="partilhar">
+	<div id="facebook" title="Facebook" onclick="go('http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww%2Elifecooler%2Ecom%2Fedicoes%2Flifecooler%2Frestaurantes%2Easp%3Fcat%3D19','');"></div>
+	<div id="rss" title="RSS" onclick="go('rss.asp','');"></div>
+    <!--a href="" target="_blank"><div id="flicker" title="Flicker"></div></a>
+    <a fref="" target="_blank"><div id="twitter" title="twitter"></div></a-->
+</div>
+
+
+<div class="facebook">
+<div id="fb-root"></div>
+<script type="text/javascript">
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/pt_PT/all.js#xfbml=1&appId=231693123521201";
+        fjs.parentNode.insertBefore(js, fjs);
+    } (document, 'script', 'facebook-jssdk'));
+</script>
+<div class="fb-like-box" data-href="http://www.facebook.com/Lifecooler.pt" data-width="300" data-show-faces="true" data-stream="false" data-header="false"></div>
+</div>
+
+<div id="banner_direita_tres_quatro" style="clear:both;">
+<div id="banner_direita_tres"><script type="text/javascript" language="JavaScript" src="http://www.escritadigital.pt/GBanners/bsrc.asp?n=1021&amp;l=yrBo5FOO2NGk8FFck0DUdZB4OkOQ3qE2Ig2dWgNeoTrhcjOqTdh8mWMtp%2FDcVWQcQbSzW%2FgNvb1MrbKIIPARP%2F%2F4Xh0CJjGMO9TrBkyIvbzKQKAv0YETzxlElJ9j0xOZwYoREoU4pGA%3D"></script></div>
+<div id="banner_direita_quatro"><script type="text/javascript" language="JavaScript" src="http://www.escritadigital.pt/GBanners/bsrc.asp?n=1035&amp;l=%2BuZ%2B1sRFetgjDeLI3zf0MU6S98vnTzdOBMhLHlZ4xqYWQ4QyuUVBFKNt%2FwTX%2B02NZ5Jr7SoBsnL1QXZf5psHQ%2B2%2BrDEvynuCCxHCugAxXgcLEua7kYEMyBJfx%2BR37m6AsJakdkc%3D"></script></div>
+</div>
+
+<h2 class="meteorologia">Meteorologia</h2>
+<div class="meteo">
+    <ul>
+        
+        <li class="first_meteo">
+            <span class="cidade">Lisboa</span>
+            
+            <div class="dia_valor">
+                <div class="interior_valores">
+                    <span>Máx. 16º</span>
+                    <span>Min. 10º</span>
+                    <span class="dia">Hoje</span>
+                </div>
+                <div class="interior_imagem aguaceiro"></div>
+            </div>
+            
+            <div class="dia_valor sub">
+                <div class="interior_valores">
+                    <span>Máx. 14º</span>
+                    <span>Min. 7º</span>
+                    <span class="dia">Qua</span>
+                </div>
+                <div class="interior_imagem solNuvem"></div>
+            </div>
+            
+        </li>
+        
+        
+        <li>
+            <span class="cidade">Porto</span>
+            
+            <div class="dia_valor">
+                <div class="interior_valores">
+                    <span>Máx. 14º</span>
+                    <span>Min. 8º</span>
+                    <span class="dia">Hoje</span>
+                </div>
+                <div class="interior_imagem chuvaFraca"></div>
+            </div>
+            
+            <div class="dia_valor sub">
+                <div class="interior_valores">
+                    <span>Máx. 14º</span>
+                    <span>Min. 4º</span>
+                    <span class="dia">Qua</span>
+                </div>
+                <div class="interior_imagem solNuvem"></div>
+            </div>
+            
+        </li>
+        
+        
+        
+        <li>
+            <span class="cidade">Faro</span>
+            
+            <div class="dia_valor">
+                <div class="interior_valores">
+                    <span>Máx. 17º</span>
+                    <span>Min. 13º</span>
+                    <span class="dia">Hoje</span>
+                </div>
+                <div class="interior_imagem nublado"></div>
+            </div>
+            
+            <div class="dia_valor sub">
+                <div class="interior_valores">
+                    <span>Máx. 15º</span>
+                    <span>Min. 10º</span>
+                    <span class="dia">Qua</span>
+                </div>
+                <div class="interior_imagem aguaceiro"></div>
+            </div>
+            
+        </li>
+          
+    </ul>
+</div>
+
+
+<a href="meteorologia.asp"><img src="@pics/outras_localidades.gif" alt="Outras Localidades" class="outras_localidades" /></a>
+
+</div>
+
+
+		</div>
+	
+<div id="leftcol">
+
+<h2 class="sugestoes">Sugestões</h2>
+<ul class="nav_esquerda">
+	
+    <li><a href="staticRedirect.asp?id=2004">Novidades</a></li>
+    <li><a href="staticRedirect.asp?id=2000">Roteiros</a></li>
+    <li><a href="staticRedirect.asp?id=2001">Dormidas</a></li>
+    <li><a href="staticRedirect.asp?id=2002">Comidas</a></li>
+    <li><a href="staticRedirect.asp?id=2003">Experiências</a></li>
+    <li><a href="staticRedirect.asp?id=2005">Coolómetro</a></li>
+    <li>
+        <a href="staticRedirect.asp?id=2007">Sub 12</a>
+        <div style="position:relative; left:59px; top:-19px;"><img src="@pics/tmn_BT.jpg" alt="" /></div>
+    </li>
+    <li><a href="staticRedirect.asp?id=2008">Dossiês</a></li>
+    <li><a href="parcerias.asp">Cidades Parceiras</a></li>
+    <li class="ultima enfoque"><a href="http://www.lifecooler.com/baixoguadiana/">Baixo Guadiana</a><img src="@pics/BT_baixoguadiana_HP.png" alt="" /></li>
+</ul>
+
+
+
+<h2 class="guias">Guias</h2>
+<ul class="nav_esquerda guiasli">								
+    <li><a href="staticRedirect.asp?id=3000">Localidades</a></li>
+    <li><a href="staticRedirect.asp?id=3001">Alojamento</a></li>
+    <li><a href="staticRedirect.asp?id=3004">Actividades</a></li>
+    <li><a href="staticRedirect.asp?id=3002">Restaurantes</a></li>
+    <li><a href="staticRedirect.asp?id=3003">Tarde/Noite</a></li>
+    <li><a href="staticRedirect.asp?id=3005">Natureza</a></li>
+    <li><a href="staticRedirect.asp?id=3006">Património</a></li>
+    <li><a href="staticRedirect.asp?id=3007">Prod. Regionais</a></li>
+    <li class="ultima"><a href="staticRedirect.asp?id=3008">Compras</a></li>
+</ul>
+
+<h2 class="coolgift tmp"><span><a href="/coolgift/index.aspx" target="_blank">Coolgift</a></span></h2>
+<ul class="nav_esquerda">
+    <li><a href="/coolgift/staticRedirect.aspx?id=100001" target="_blank">O que é?</a></li>
+    <li><a href="/coolgift/staticRedirect.aspx?id=100000" target="_blank">30 Packs</a></li>
+    <li><a href="/coolgift/staticRedirect.aspx?id=100005" target="_blank">Onde Comprar</a></li>
+    <li><a href="/coolgift/staticRedirect.aspx?id=100004" target="_blank">Garantias</a></li>
+    <li class="ultima"><a href="staticRedirect.asp?id=2009">Sugestões</a></li>
+</ul>
+
+<h2 class="discount_book tmp"><span><a href="/edicoes/discountBook/index.asp" target="_blank">Discount Book</a></span></h2>
+<ul class="nav_esquerda">
+    <li><a href="/edicoes/discountBook/html/oQueE.html" target="_blank">O que é?</a></li>
+    <li><a href="/edicoes/discountBook/dbTopoCanal.asp?f2=284" target="_blank">Restaurantes</a></li>
+    <li><a href="/edicoes/discountBook/dbTopoCanal.asp?f2=285" target="_blank">Hotéis</a></li>
+    <li><a href="/edicoes/discountBook/dbTopoCanal.asp?f2=286" target="_blank">Experiências</a></li>
+    <li><a href="/edicoes/discountBook/dbTopoCanal.asp?f2=287" target="_blank">Bares</a></li>
+    <li class="ultima"><a href="/edicoes/discountBook/dbCatalogo.asp" target="_blank">Espreitar</a></li>
+</ul>
+
+<h2 class="cartaz tmp"><span><a href="agenda.asp">Cartaz</a></span></h2>
+<ul class="nav_esquerda">
+    <li><a href="staticRedirect.asp?id=4000">Escolhas Semana</a></li>
+    <li><a href="staticRedirect.asp?id=4008">Sugestão Gratuita</a></li>
+    <li><a href="staticRedirect.asp?id=4001">Cinema</a></li>
+    <li><a href="staticRedirect.asp?id=4002">Música</a></li>
+    <li><a href="staticRedirect.asp?id=4003">Teatro/Dança</a></li>
+    <li><a href="staticRedirect.asp?id=4004">Exposições</a></li>
+    <li><a href="staticRedirect.asp?id=4005">Festas/Feiras</a></li>
+
+    <li class="ultima"><a href="staticRedirect.asp?id=4006">Televisão</a></li>
+
+</ul>
+
+<h2 class="e_ainda">E ainda...</h2>
+<ul class="nav_esquerda simbol">
+    <li id="descubra_acores"><a href="http://www.banif.pt/xsite/BanifAcores/home/AcoresHome.jsp" target="_blank">Descubra os Açores</a></li>
+    <li id="descubra_madeira"><a href="http://www.banif.pt/xsite/BanifMadeira/home/MadeiraHome.jsp" target="_blank">Descubra a Madeira</a></li>
+    <li id="turismo_acessivel"><a href="staticRedirect.asp?id=5000">Turismo Acessível</a></li>
+    <li id="portugal_imagens"><a href="staticRedirect.asp?id=5001">Portugal em Imagens</a></li>
+    <li id="artigos_top_5"><a href="listaTop.asp">Top Artigos</a></li>
+    <li id="mochila"><a href="mochila.asp">Mochila</a></li>
+    <li id="arquivo_newsletters" class="ultima"><a href="arqNewsLetter.asp">Arq. Newsletters</a></li>
+</ul>
+
+</div>
+
+
+	</div>
+	<div id="footer">
+
+<ul>
+
+    <li class="footet_lif"><a href="index.asp">Home</a></li>
+    <li><a href="desenvFooter.asp?cat=400">Quem somos</a></li>
+    <li><a href="desenvFooter.asp?cat=482">O projecto</a></li>
+    <li><a href="desenvFooter.asp?cat=399">Anunciar no Lifecooler</a></li>
+    <!--<li><a href="mp_mapadosite.asp">Mapa do Site</a></li>-->
+    <li><a href="desenvFooter.asp?cat=647">Contactos</a></li>
+    <li><a href="http://www.lifecooler.com/edicoes/lifecooler/desenvRegArtigo.asp?art=6766&amp;rev=2">O Site de Turismo Mais Visitado</a></li>
+
+</ul>
+<ul id="escrita">
+	<li><span>desenvolvimento:</span> <a href="http://www.escritadigital.pt" target="_blank">Escrita Digital</a> </li>
+	<li><span>powered by:</span> <a href="http://www.escritadigital.pt/edicoes/escritadigital/Desenvolvimento.asp?categoria=390&amp;artigo=956" target="_blank">ED Portal</a> </li>
+</ul>
+</div>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-738899-1";
+urchinTracker();
+</script>
+<!--JavaScript Tag with group ID // Tag for network 1100: Sitios_Lifecooler // Website: lifecooler // Page: LIFECOOLER - Restaurantes // Placement: layer - restaurantes (3199092) // created at: May 4, 2012 11:47:37 AM-->
+<script language="javascript">
+<!--
+    if (window.adgroupid == undefined) {
+        window.adgroupid = Math.round(Math.random() * 1000);
+    }
+    document.write('<scr' + 'ipt language="javascript1.1" src="http://ad.dc2.adtech.de/addyn/3.0/1100/3199092/0/16/ADTECH;loc=100;target=_blank;sub1=[subst];grp=' + window.adgroupid + ';misc=' + new Date().getTime() + '"></scri' + 'pt>');
+//-->
+</script><noscript><a href="http://ad.dc2.adtech.de/adlink/3.0/1100/3199092/0/16/ADTECH;loc=300;sub1=[subst]" target="_blank"><img src="http://ad.dc2.adtech.de/adserv/3.0/1100/3199092/0/16/ADTECH;loc=300" border="0" width="1" height="1"></a></noscript>
+<!-- End of JavaScript Tag -->
+
+</div>
+
+</body>
+</html>
