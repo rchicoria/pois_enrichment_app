@@ -1,0 +1,63 @@
+<div class="container">
+	<div class="row">
+		<div class="span12" id="home-local">
+			<h2>Escolha o local</h2>
+			<ul class="nav nav-pills nav-stacked">
+				<li <% if @district == 0 %>class="active"<% end %>><a href="pois?district=0&category=<%= @category %>">PORTUGAL</a></li>
+				<% @districts.each do |district| %>
+					<li <% if @district == district.id %>class="active"<% end %>>
+						<a href="#" onclick="return goto_categoria(<%= district.id %>);"><%= district.name %></a>
+					</li>
+				<% end %>
+			</ul>
+		</div>
+		<div class="span12" id="home-categoria">
+			<h2>Escolha a categoria</h2>
+			<table class="category-chooser">
+				<tr>
+					<td>
+						<a href="pois?category=0"><img src="http://cdn1.iconfinder.com/data/icons/pretty_office_3/256/Star-Full.png"></a>
+						<p>Top</p>
+					</td>
+					<td>
+						<a href="pois?category=1"><img src="http://cdn1.iconfinder.com/data/icons/dot/256/restaurant_food.png"></a>
+						<p>Restaurantes</p>
+					</td>
+					<td>
+						<a href="pois?category=2"><img src="http://png-1.findicons.com/files/icons/2219/dot_pictograms/128/drink_bar_cocktails.png"></a>
+						<p>Bares</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="pois?category=3"><img src="http://www.mycincinnatichapel.com/wp-content/uploads/2011/11/Chapel-Icon.png"></a>
+						<p>Monumentos</p>
+					</td>
+					<td>
+						<a href="pois?category=4"><img src="http://www.veryicon.com/icon/png/Nature/Agriculture/Tree.png"></a>
+						<p>Parques</p>
+					</td>
+					<td>
+						<a href="pois?category=5"><img src="http://ctsfl.us/Recreation/specialevents/music-note-SH-icon.png"></a>
+						<p>Cultura</p>
+					</td>
+				</tr>
+				<tr
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	$('#home-categoria').hide();
+	function goto_categoria(id_cidade) {
+		$('#home-categoria a').each(function() {
+			var new_url = this.href + '&district=' + id_cidade;
+			this.href = new_url;
+		});
+		$('#home-local').hide();
+		$('#home-categoria').show();
+		local = id_cidade;
+		return true;
+	}
+</script>

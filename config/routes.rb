@@ -12,7 +12,8 @@ PoisEnrichmentApp::Application.routes.draw do
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   resources :pois
-  root :to => 'pois#index'
+  resources :home
+  root :to => 'home#index'
 
   # Sample resource route with options:
   #   resources :products do

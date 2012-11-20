@@ -67,6 +67,16 @@ body {
 	margin-top: 45px;
 }
 
+table.category-chooser {
+	width: 100%;
+}
+
+	table.category-chooser td {
+		width: 33%;
+		padding: 5%;
+		text-align: center;
+	}
+
 .pics .span3 {
 	padding: 0;
 	margin: 0;
@@ -79,6 +89,10 @@ li.thumbnail {
 	margin-left: 10px;
 	margin-right: 10px;
 }
+
+	li.thumbnail:hover {
+		border-color: #ccc;
+	}
 
 @media (min-width: 480px) and (max-width: 768px) {
 	.span3 {

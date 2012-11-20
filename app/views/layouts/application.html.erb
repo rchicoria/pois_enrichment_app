@@ -14,9 +14,9 @@
 	<div class="topbar">
 		<ul class="menu" style="float: left">
 			<li class="option">
-				<a class="option" href="#">OND?</a>
+				<a class="option" href="/?district=<%= @district %>&category=<%= @category %>">OND?</a>
 			</li>
-			<li id="local" class="dropdown option">
+			<li id="local" class="dropdown option hidden-phone">
 				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
 					<%= District.find(@district).name unless @district == 0 %>
 					<% if @district == 0 %>PORTUGAL<% end %>
@@ -29,7 +29,7 @@
 					<% end %>
 				</ul>
 			</li>
-			<li id="categoria" class="dropdown option">
+			<li id="categoria" class="dropdown option hidden-phone">
 				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
 					<%= Category.get_ond_category[@category][:name] %>
 					<b class="caret"></b>
