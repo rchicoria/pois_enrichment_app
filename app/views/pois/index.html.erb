@@ -1,15 +1,29 @@
-<h1>Listing POIS</h1>
- 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Category</th>
-  </tr>
- 
+
+<% @pois_thumbs = [ [], [], [], [] ] %>
+<% @i = 0 %>
 <% @pois.each do |poi| %>
-  <tr>
-    <td><%= poi.name %></td>
-    <td><%= poi.categories[0].name %></td>
-  </tr>
+	<% @pois_thumbs[@i] << poi %>
+	<% @i = (@i + 1) % 4 %>
 <% end %>
-</table>
+
+<div class="container">
+	<div class="row">
+		<% @pois_thumbs.each do |col| %>
+			<% if col != nil || col.length > 0 %>
+				<div class="span3">
+					<ul class="thumbnails">
+						<% col.each do |poi| %>
+							<li class="thumbnail">
+							<a href="#"><img src="http://placehold.it/260x180" alt=""></a>
+							<div class="caption">
+								<h4><%= poi.name %></h4>
+								<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
+							</div>
+						</li>
+						<% end %>
+					</ul>
+				</div>
+			<% end %>
+		<% end %>
+	</div>
+</div>

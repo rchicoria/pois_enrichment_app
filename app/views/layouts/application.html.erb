@@ -1,14 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-  <title>PoisEnrichmentApp</title>
+  <title>OND?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Add this to the head of your HTML layout -->
+	<link rel="stylesheet" href="http://www.ost.pt/css/apps/assets/bootstrap-v0.6.1.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://www.ost.pt/developers/front-end-style-guides/assets/js/bootstrap-dropdown.js"></script>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
-<%= yield %>
+	<div class="topbar">
+		<ul class="menu" style="float: left">
+			<li class="option">
+				<a class="option" href="#">OND?</a>
+			</li>
+			<li id="distrito" class="dropdown option">
+				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">Coimbra</a>
+				<ul class="dropdown-menu">
+					<li><a href="#">PORTUGAL</a></li>
+					<li><a href="#">Aveiro</a></li>
+					<li><a href="#">Beja</a></li>
+					<li><a href="#">Braga</a></li>
+				</ul>
+			</li>
+			<li class="option">
+				<a class="option" href="#">Bares</a>
+			</li>
+		</ul>
+		<ul class="menu" style="float: right">
+			<li class="option">
+				<a class="option" href="#"><i class="icon-search icon-white"></i></a>
+			</li>
+		</ul>
+	</div>
+
+	<%= yield %>
+
+	<!-- Adicione ao final da sua página, antes da tag </body>, e substitua <your-app-id> -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	<script src="http://www.ost.pt/js/apps/app-container.js?pois_enrichment_app_prototype"></script>
 
 </body>
 </html>
