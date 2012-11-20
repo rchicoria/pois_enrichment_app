@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Add this to the head of your HTML layout -->
 	<link rel="stylesheet" href="http://www.ost.pt/css/apps/assets/bootstrap-v0.6.1.css">
-	<link rel="stylesheet" href="style.css">
-	<script src="https://www.ost.pt/developers/front-end-style-guides/assets/js/bootstrap-dropdown.js"></script>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
@@ -18,17 +16,34 @@
 			<li class="option">
 				<a class="option" href="#">OND?</a>
 			</li>
-			<li id="distrito" class="dropdown option">
-				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">Coimbra</a>
+			<li id="local" class="dropdown option">
+				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
+					<%= District.find(@district).name %>
+					<b class="caret"></b>
+				</a>
 				<ul class="dropdown-menu">
-					<li><a href="#">PORTUGAL</a></li>
-					<li><a href="#">Aveiro</a></li>
-					<li><a href="#">Beja</a></li>
-					<li><a href="#">Braga</a></li>
+					<li><a href="?district=0&category=<%= @category %>">PORTUGAL</a></li>
+					<% @districts.each do |district| %>
+						<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
+					<% end %>
 				</ul>
 			</li>
-			<li class="option">
-				<a class="option" href="#">Bares</a>
+			<li id="categoria" class="dropdown option">
+				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
+					<%= Category.get_ond_category[@category][:name] %>
+					<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="?district=<%= @district %>&category=0">Top</a></li>
+					<li><a href="?district=<%= @district %>&category=1">Restaurantes</a></li>
+					<li><a href="?district=<%= @district %>&category=2">Bares</a></li>
+					<li><a href="?district=<%= @district %>&category=3">Monumentos</a></li>
+					<li><a href="?district=<%= @district %>&category=4">Parques</a></li>
+					<li><a href="?district=<%= @district %>&category=5">Cultura</a></li>
+					<li><a href="?district=<%= @district %>&category=6">Praias</a></li>
+					<li><a href="?district=<%= @district %>&category=7">Lazer</a></li>
+					<li><a href="?district=<%= @district %>&category=8">Todos...</a></li>
+				</ul>
 			</li>
 		</ul>
 		<ul class="menu" style="float: right">
@@ -41,8 +56,9 @@
 	<%= yield %>
 
 	<!-- Adicione ao final da sua página, antes da tag </body>, e substitua <your-app-id> -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>-->
 	<script src="http://www.ost.pt/js/apps/app-container.js?pois_enrichment_app_prototype"></script>
 
+	<script src="https://www.ost.pt/developers/front-end-style-guides/assets/js/bootstrap-dropdown.js"></script>
 </body>
 </html>

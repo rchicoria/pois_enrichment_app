@@ -1,5 +1,18 @@
 class PoisController < ApplicationController
+	DISTRICT_DEFAULT = 35
+	CATEGORY_DEFAULT = 2
+
 	def index
-		@pois = Poi.find_by("district"=>35, :category=>19)
+		@district = DISTRICT_DEFAULT
+		@category = CATEGORY_DEFAULT
+		@district = Integer(params[:district]) if params[:district] && Integer(params[:district])
+		@category = Integer(params[:category]) if params[:category] && Integer(params[:category])
+		@pois = []
+		Category.get_ond_category[@category][:ost].each do |id|
+			Poi.find_by(:district=>@district, :category=>id).each do |poi|
+				@pois << poi
+			end
+		end
+		@districts = District.all
 	end
 end
