@@ -1,22 +1,24 @@
-class Parish < AppModel
+class District < AppModel
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :id, :name, :region_id, :municipality_id
+  attr_accessor :id, :name, :region_id, :country
 
   REJECTED_PROPERTIES = []
 
   def self.model_name
-    "parishes"
+    "districts"
   end
 
   # allows this class to use "new" method with an hash as param
   def initialize(attributes = {})
     attributes.each do |name, value|
       if REJECTED_PROPERTIES.include? name
-        next      
+        next
+      elsif name == "country"
+        send("#{name}=",Country.new(value))
       elsif attributes[name].class.to_s == "Hash" 
         # if it's a relation hash
         send("#{name}_id=",attributes[name]["id"])
@@ -34,7 +36,7 @@ class Parish < AppModel
 
   def self.find(id)
     json_hash = (JSON.parse(RestClient.get(url_id(id))) rescue nil)
-    json_hash != nil ? Parish.new(json_hash) : nil 
+    json_hash != nil ? District.new(json_hash) : nil 
   end
 
   def self.find_by(params = {})
@@ -48,18 +50,18 @@ class Parish < AppModel
       json_hash = result["Objects"]
       total_objects = result["Meta"]["total_objects"].to_i
       json_hash.each do |x|
-        objects << Parish.new(x)
+        objects << District.new(x)
       end
       count += 25
     end while count < total_objects
     objects
   end
 
-  def municipality
-    Municipality.find(municipality_id)
+  def municipalities
+    Municipality.find_by("district"=>id)
   end
 
-  def streets
-    Street.find_by("parish"=>id)
+  def pois
+    Poi.find_by("district"=>id)
   end
 end

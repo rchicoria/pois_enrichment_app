@@ -56,6 +56,6 @@ class Category < AppModel
   end
 
   def pois
-    POI.find_by("category"=>id)
+    Poi.find_by("category"=>id)
   end
 end

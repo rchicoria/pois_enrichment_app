@@ -1,14 +1,14 @@
-class POI < AppModel
+class Poi < AppModel
 	include ActiveModel::Validations
 	include ActiveModel::Conversion
 	include ActiveModel::Serialization
 	extend ActiveModel::Naming
 
 	attr_accessor :id, :name, :geom_feature, :last_modified, :publication_date,
-	:start_time, :end_time, :parent_poi_id, :location_id, :street_id, :parish_id,
-	:municipality_id, :district_id, :country_id, :categories_id
+	:start_time, :end_time, :parent_poi_id, :location_id, :street, :parish_id,
+	:municipality_id, :district_id, :country, :categories_id
 
-	REJECTED_PROPERTIES = ["categories","distance"]
+	REJECTED_PROPERTIES = ["distance"]
 
 	def self.model_name
 		"pois"
@@ -21,7 +21,11 @@ class POI < AppModel
 				next
 			elsif name == "geom_feature"
 				# if it's a GEO JSON hash
-				send("#{name}=", RGeo::GeoJSON.decode(value))  			
+				send("#{name}=", RGeo::GeoJSON.decode(value))  
+			elsif name == "country"
+				send("#{name}=",Country.new(value))
+			elsif name == "street" and value
+				send("#{name}=",Street.new(value))			
 			elsif attributes[name].class.to_s == "Hash" 
 				# if it's a relation hash
 				send("#{name}_id=",attributes[name]["id"])
@@ -46,7 +50,7 @@ class POI < AppModel
 
 	def self.find(id)
 		json_hash = (JSON.parse(RestClient.get(url_id(id))) rescue nil)
-		json_hash != nil ? POI.new(json_hash) : nil 
+		json_hash != nil ? Poi.new(json_hash) : nil 
 	end
 
 	def self.find_by(params = {})
@@ -60,7 +64,7 @@ class POI < AppModel
 			json_hash = result["Objects"]
 			total_objects = result["Meta"]["total_objects"].to_i
 			json_hash.each do |x|
-				objects << POI.new(x)
+				objects << Poi.new(x)
 			end
 			count += 25
 		end while count < total_objects
@@ -71,11 +75,20 @@ class POI < AppModel
 		Municipality.find(municipality_id)
 	end
 
+	def district
+		District.find(district_id)
+	end
+
+	def parish
+		Parish.find(parish_id)
+	end
+
 	# returns categories array
 	def categories
 		array = []
 		categories_id.each do |x|
-			array < Category.find(x)
+			array << Category.find(x)
 		end
+		array
 	end
 end

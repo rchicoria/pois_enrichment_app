@@ -56,6 +56,10 @@ class Municipality < AppModel
   end
 
   def pois
-    POI.find_by("municipality"=>id)
+    Poi.find_by("municipality"=>id)
+  end
+
+  def parishes
+    Parish.find_by("municipality"=>id)
   end
 end
