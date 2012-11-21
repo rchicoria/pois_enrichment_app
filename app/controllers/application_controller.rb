@@ -3,6 +3,6 @@ class ApplicationController < ActionController::Base
 
   def mobile_agent?
   	# negate this statement to test for mobile
-	(request.user_agent =~ /Mobile|webOS/ and not request.user_agent =~ /iPad/)
+	!(request.user_agent =~ /Mobile|webOS/ and not request.user_agent =~ /iPad/)
   end
 end
