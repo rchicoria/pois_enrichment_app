@@ -36,6 +36,8 @@ class Poi < AppModel
 					array << x["id"]
 				end
 				send("#{name}_id=",array)
+		    elsif attributes[name] == "name"
+		    	send("#{name}=",value)
 			elsif attributes[name] != nil
 				# if it's an object's attribute check if can be converted to Time object
 				value = (value.to_time rescue value)

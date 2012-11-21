@@ -22,6 +22,8 @@ class District < AppModel
       elsif attributes[name].class.to_s == "Hash" 
         # if it's a relation hash
         send("#{name}_id=",attributes[name]["id"])
+      elsif attributes[name] == "name"
+        send("#{name}=",value)
       elsif attributes[name]
         # if it's an object's attribute check if can be converted to Time object
         value = (value.to_time rescue value)

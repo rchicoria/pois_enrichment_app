@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    RubyInline (3.11.3)
+      ZenTest (~> 4.3)
+    ZenTest (4.8.2)
     actionmailer (3.2.9)
       actionpack (= 3.2.9)
       mail (~> 2.4.4)
@@ -40,6 +43,9 @@ GEM
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    fuzzy-string-match (0.9.4)
+      RubyInline (>= 3.8.6)
+      RubyInline (>= 3.8.6)
     hike (1.2.1)
     i18n (0.6.1)
     journey (1.0.4)
@@ -111,6 +117,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
+  fuzzy-string-match
   jquery-rails
   nokogiri
   rails (= 3.2.9)
