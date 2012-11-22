@@ -11,59 +11,72 @@
 </head>
 <body>
 
-	<div class="topbar">
-		<ul class="menu" style="float: left">
-			<li class="option">
-				<a class="option" href="/?district=<%= @district %>&category=<%= @category %>">OND?</a>
-			</li>
-			<li id="local" class="dropdown option hidden-phone">
-				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-					<%= District.find(@district).name unless @district == 0 %>
-					<% if @district == 0 %>PORTUGAL<% end %>
-					<b class="caret"></b>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a href="?district=0&category=<%= @category %>">PORTUGAL</a></li>
-					<% @districts.each do |district| %>
-						<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
-					<% end %>
-				</ul>
-			</li>
-			<li id="categoria" class="dropdown option hidden-phone">
-				<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-					<%= Category.get_ond_category[@category][:name] %>
-					<b class="caret"></b>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a href="?district=<%= @district %>&category=0">Top</a></li>
-					<li><a href="?district=<%= @district %>&category=1">Restaurantes</a></li>
-					<li><a href="?district=<%= @district %>&category=2">Bares</a></li>
-					<li><a href="?district=<%= @district %>&category=3">Monumentos</a></li>
-					<li><a href="?district=<%= @district %>&category=4">Parques</a></li>
-					<li><a href="?district=<%= @district %>&category=5">Cultura</a></li>
-					<li><a href="?district=<%= @district %>&category=6">Praias</a></li>
-					<li><a href="?district=<%= @district %>&category=7">Lazer</a></li>
-					<li><a href="?district=<%= @district %>&category=8">Todos...</a></li>
-				</ul>
-			</li>
-		</ul>
-		<ul class="menu" style="float: right">
-			<li id="search" class="dropdown option">
-				<a class="dropdown-toggle option" href="#" data-toggle="dropdown">
-					<i class="icon-search icon-white"></i>
-					<b class="caret"></b>
-				</a>
-				<ul class="dropdown-menu" style="margin-left: -200px">
-					<li>
-						<form class="form-search" style="margin: 5px 10px 5px 10px; width: 240px">
-							<input name="s" id="s" type="text" placeholder="Search..." class="input-medium search-query" style="width: 180px">
-							<button type="submit" class="btn">Go</button>
+	<div id="header">
+
+		<div id="search-container">
+			<div class="container" style="margin: 0 auto">
+				<div class="row">
+					<div class="span2 hidden-phone">&nbsp;</div>
+					<div class="span8">
+						<form class="form-inline" style="margin: 10px 0; text-align: center; padding: 0 5px 0 5px">
+							<input name="s" id="s" type="text" placeholder="Search..." class="input-large search-query">
+							<button type="submit" class="btn">Search</button>
 						</form>
-					</li>
-				</ul>
-			</li>
-		</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="topbar">
+			<ul class="menu" style="float: left">
+				<li class="option">
+					<a class="option" href="/?district=<%= @district %>&category=<%= @category %>">OND?</a>
+				</li>
+				<li id="local" class="dropdown option hidden-phone">
+					<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
+						<%= District.find(@district).name unless @district == 0 %>
+						<% if @district == 0 %>PORTUGAL<% end %>
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="?district=0&category=<%= @category %>">PORTUGAL</a></li>
+						<% @districts.each do |district| %>
+							<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
+						<% end %>
+					</ul>
+				</li>
+				<li id="categoria" class="dropdown option hidden-phone">
+					<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
+						<%= Category.get_ond_category[@category][:name] %>
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="?district=<%= @district %>&category=0">Top</a></li>
+						<li><a href="?district=<%= @district %>&category=1">Restaurantes</a></li>
+						<li><a href="?district=<%= @district %>&category=2">Bares</a></li>
+						<li><a href="?district=<%= @district %>&category=3">Monumentos</a></li>
+						<li><a href="?district=<%= @district %>&category=4">Parques</a></li>
+						<li><a href="?district=<%= @district %>&category=5">Cultura</a></li>
+						<li><a href="?district=<%= @district %>&category=6">Praias</a></li>
+						<li><a href="?district=<%= @district %>&category=7">Lazer</a></li>
+						<li><a href="?district=<%= @district %>&category=8">Todos...</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="menu" style="float: right">
+				<li id="search" class="option">
+					<a class="option" style="cursor: pointer" onclick="$('#search-container').slideToggle();">
+						<i class="icon-search icon-white"></i>
+					</a>
+				</li>
+			</ul>
+		</div>
+
 	</div>
+
+	<script>
+		$('#search-container').hide();
+	</script>
 
 	<%= yield %>
 
