@@ -1,0 +1,2 @@
+class Praia < Local
+end

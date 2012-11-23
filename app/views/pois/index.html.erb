@@ -14,10 +14,21 @@
 					<ul class="thumbnails">
 						<% col.each do |poi| %>
 							<li class="thumbnail">
-							<a href="#"><img src="http://placehold.it/260x180" alt=""></a>
+							<a href="#">
+								<% if @category == 6 and @district == 0 and poi.url_imagem %>
+									<img src="<%= poi.url_imagem %>" alt="">
+								<% else %>
+									<img src="http://placehold.it/260x180" alt="">
+								<% end %>
+							</a>
 							<div class="caption">
-								<h4><%= poi.name %></h4>
-								<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
+								<% if @category == 6 and @district == 0 %>
+									<h4><%= poi.nome %></h4>
+									<p>Esta praia <%= "não " if not poi.bandeira_azul %>possui bandeira azul.</p>
+								<% else %>
+									<h4><%= poi.name %></h4>
+									<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
+								<% end %>
 							</div>
 						</li>
 						<% end %>
