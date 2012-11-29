@@ -6,9 +6,10 @@ class Poi < AppModel
 
 	attr_accessor :id, :name, :geom_feature, :last_modified, :publication_date,
 	:start_time, :end_time, :parent_poi_id, :location_id, :street, :parish_id,
-	:municipality_id, :district_id, :country, :categories_id, :info
+	:municipality_id, :district_id, :country, :categories_id, :info, :info2
 
 	REJECTED_PROPERTIES = ["distance"]
+	GOOGLE_API_URL = "http://maps.googleapis.com/maps/api/geocode/json"
 
 	def self.model_name
 		"pois"
@@ -16,12 +17,14 @@ class Poi < AppModel
 
 	# allows this class to use "new" method with an hash as param
 	def initialize(attributes = {})
+		geographic_factory = RGeo::Geographic.spherical_factory
+		coder = RGeo::GeoJSON::Coder.new(:geo_factory=>geographic_factory)
 		attributes.each do |name, value|
 			if REJECTED_PROPERTIES.include? name
 				next
 			elsif name == "geom_feature"
 				# if it's a GEO JSON hash
-				send("#{name}=", RGeo::GeoJSON.decode(value))  
+				send("#{name}=", coder.decode(value))  
 			elsif name == "country"
 				send("#{name}=",Country.new(value))
 			elsif name == "street" and value
@@ -36,7 +39,7 @@ class Poi < AppModel
 					array << x["id"]
 				end
 				send("#{name}_id=",array)
-		    elsif attributes[name] == "name"
+		    elsif name == "name"
 		    	send("#{name}=",value)
 			elsif attributes[name] != nil
 				# if it's an object's attribute check if can be converted to Time object

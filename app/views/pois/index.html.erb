@@ -1,16 +1,17 @@
 <h1>Listing POIS</h1>
  
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Category</th>
-  </tr>
- 
-<% @pois.each do |poi| %>
-  <tr>
-    <td><%= poi.name %></td>
-    <td><%= poi.categories[0].name %></td>
-    <td><%= poi.info %></td>
-  </tr>
-<% end %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+    </tr>
+   
+  <% @pois.each do |poi| %>
+    <tr>
+      <td><%= poi.name %></td>
+      <td><%= poi.categories[0].name %></td>
+      <td><%= poi.info %></td>
+      <td><%= poi.info2 %></td>
+    </tr>
+  <% end %>
 </table>
