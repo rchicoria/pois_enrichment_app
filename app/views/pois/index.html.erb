@@ -14,27 +14,93 @@
 					<ul class="thumbnails">
 						<% col.each do |poi| %>
 							<li class="thumbnail">
-							<a href="#">
-								<% if @category == 6 and @district == 0 and poi.url_imagem %>
-									<img src="<%= poi.url_imagem %>" alt="">
-								<% else %>
-									<img src="http://placehold.it/260x180" alt="">
-								<% end %>
-							</a>
-							<div class="caption">
-								<% if @category == 6 and @district == 0 %>
-									<h4><%= poi.nome %></h4>
-									<p>Esta praia <%= "não " if not poi.bandeira_azul %>possui bandeira azul.</p>
-								<% else %>
-									<h4><%= poi.name %></h4>
-									<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
-								<% end %>
-							</div>
-						</li>
+								<a href="#" <% if @category == 6 and @district == 0 %>onclick="show_modal(<%= poi.id %>); return false;"<% end %>>
+									<% if @category == 6 and @district == 0 and poi.url_imagem %>
+										<img src="<%= poi.url_imagem %>" alt="">
+									<% else %>
+										<img src="http://placehold.it/260x180" alt="">
+									<% end %>
+								</a>
+								<div class="caption">
+									<% if @category == 6 and @district == 0 %>
+										<h4><%= poi.nome %></h4>
+										<p>Esta praia <%= "não " if not poi.bandeira_azul %>possui bandeira azul.</p>
+									<% else %>
+										<h4><%= poi.name %></h4>
+										<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
+									<% end %>
+								</div>
+							</li>
 						<% end %>
 					</ul>
 				</div>
 			<% end %>
 		<% end %>
 	</div>
+	<div class="modal hide" id="myModal" style="width: 95%; max-width: 530px; max-height: 80%">
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">×</button>
+		    <h3></h3>
+		</div>
+		<div class="modal-tabs">
+			<ul class="nav nav-tabs">
+				<li id="tab-informacoes"><a style="cursor: pointer" onclick="select_informacoes(); return false;">Informações</a></li>
+				<li id="tab-localizacao"><a style="cursor: pointer" onclick="select_localizacao(); return false;">Localização</a></li>
+			</ul>
+		</div>
+		<div class="modal-body">
+			<div id="modal-informacoes"></div>
+			<div id="modal-localizacao"></div>
+		</div>
+		<div class="modal-footer">
+		    <a href="#" class="btn" data-dismiss="modal">Close</a>
+		    <a href="#" class="btn btn-primary">Save changes</a>
+		</div>
+	</div>
+
+	<script>
+		function select_informacoes() {
+			$('#modal-informacoes').show();
+			$('#modal-localizacao').hide();
+			$('#tab-informacoes').attr('class', 'active');
+			$('#tab-localizacao').attr('class', '');
+		}
+
+		function select_localizacao() {
+			$('#modal-informacoes').hide();
+			$('#modal-localizacao').show();
+			$('#tab-informacoes').attr('class', '');
+			$('#tab-localizacao').attr('class', 'active');
+		}
+
+		function show_modal(id) {
+			$('#myModal h3').text(' ');
+			$('#modal-informacoes').text('');
+			$('#modal-informacoes').append('<p align="center" style="margin-top: 20px"><img src="http://www.animale.com.br/wp-content/themes/animale2013/images/loading.gif" width="20"></p>');
+			$('#modal-localizacao').text('');
+			select_informacoes();
+			$('#myModal').modal('show');
+			var jqxhr = $.getJSON("http://localhost:3000/pois/"+id+".json", function() {
+				var r = JSON.parse(jqxhr.responseText);
+				console.log(r);
+				$('#myModal h3').text(r.local.nome);
+				var informacoes = "";
+				if (r.local.url_imagem) informacoes += "<p><img src='"+r.local.url_imagem+"'></p>";
+				if (r.local.bandeira_azul) informacoes += "<p>Esta praia tem bandeira azul.</p>";
+				else informacoes += "<p>Esta praia não tem bandeira azul.</p>";
+				if (r.servicos.length > 0) {
+					informacoes += "<p>Serviços disponíveis:</p><ul>";
+					for (var i in r.servicos) {
+						informacoes += "<li>"+r.servicos[i].nome+"</li>";
+						console.log(r.servicos[i]);
+					}
+					informacoes += "</ul>"
+				}
+				$('#modal-informacoes').text('');
+				$('#modal-informacoes').append(informacoes);
+				$('#modal-localizacao').append("<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+r.local.lat+"<br /><b>Longitude:</b> "+r.local.lng+"</p>");
+			})
+			.error(function() { console.log(jqxhr); });
+		}
+	</script>
 </div>

@@ -23,6 +23,18 @@ class PoisController < ApplicationController
 				end
 			end
 		end
-		@districts = []#District.all
+		@districts = District.all
+	end
+
+	def show
+		@local = Local.find(params[:id])
+		resposta = {:local => @local, :servicos => @local.servicos}
+		@district = 0
+		@category = 6
+		@districts = District.all
+		respond_to do |format|
+			format.xml { render :xml => resposta.to_xml }
+			format.json { render :json => resposta.to_json }
+		end
 	end
 end
