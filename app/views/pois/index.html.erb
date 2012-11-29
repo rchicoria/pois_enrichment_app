@@ -42,13 +42,13 @@
 		    <button type="button" class="close" data-dismiss="modal">×</button>
 		    <h3></h3>
 		</div>
-		<div class="modal-tabs">
+		<div class="modal-tabs" style="background: #fafafa">
 			<ul class="nav nav-tabs">
 				<li id="tab-informacoes"><a style="cursor: pointer" onclick="select_informacoes(); return false;">Informações</a></li>
 				<li id="tab-localizacao"><a style="cursor: pointer" onclick="select_localizacao(); return false;">Localização</a></li>
 			</ul>
 		</div>
-		<div class="modal-body">
+		<div class="modal-body" style="overflow: hidden">
 			<div id="modal-informacoes"></div>
 			<div id="modal-localizacao"></div>
 		</div>
@@ -74,7 +74,8 @@
 		}
 
 		function show_modal(id) {
-			$('#myModal h3').text(' ');
+			$('#myModal h3').text('');
+			$('#myModal h3').append('&nbsp;');
 			$('#modal-informacoes').text('');
 			$('#modal-informacoes').append('<p align="center" style="margin-top: 20px"><img src="http://www.animale.com.br/wp-content/themes/animale2013/images/loading.gif" width="20"></p>');
 			$('#modal-localizacao').text('');
