@@ -54,6 +54,11 @@ namespace :db do
 			obj_praia.lat = npage.css('.latitude').first.to_s.scan(/>(.+)</).first.first
 			obj_praia.lng = npage.css('.longitude').first.to_s.scan(/>(.+)</).first.first
 
+			# Municipio e distrito
+			municipio = Municipality.find_by("center" => obj_praia.lng+","+obj_praia.lat, "range" => "1").first
+			obj_praia.municipio = Integer(municipio.id)
+			obj_praia.distrito = Integer(municipio.district_id)
+
 			# Bandeira azul
 			obj_praia.bandeira_azul = ( npage.css('.ico-bandeira-azul').first != nil )
 

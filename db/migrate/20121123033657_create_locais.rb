@@ -6,6 +6,8 @@ class CreateLocais < ActiveRecord::Migration
       t.string  :lat
       t.string  :lng
       t.string  :type
+      t.integer :municipio
+      t.integer :distrito
 
       t.boolean :bandeira_azul
     end

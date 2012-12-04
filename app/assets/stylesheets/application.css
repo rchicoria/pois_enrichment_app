@@ -17,8 +17,7 @@
 body {
 	margin-left: -1px;
 	margin-right: -1px;
-	padding-left: 0;
-	padding-right: 0;
+	padding: 0;
 	background: #EBF5F4;
 }
 
@@ -80,7 +79,10 @@ body {
 				}
 
 .container {
-	margin-top: 45px;
+	padding-top: 50px;
+}
+#search-container .container {
+	padding-top: 0;
 }
 
 table.category-chooser {
