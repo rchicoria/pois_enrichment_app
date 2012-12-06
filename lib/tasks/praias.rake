@@ -36,44 +36,47 @@ namespace :db do
 				proxima = npage.css('.pagination-nav ul li a.linkNext').first
 				url = proxima.attributes["href"].value if proxima
 			end while proxima
-			break
+			# break <-- descomentar para testar apenas para praias do norte
 		end
 
 		# Guardar dados de cada praia
 		praias.each do |praia|
-			page = RestClient.get(URI.escape(praia[:url]))
-			npage = Nokogiri::HTML(page)
+			begin
+				page = RestClient.get(URI.escape(praia[:url]))
+				npage = Nokogiri::HTML(page)
 
-			obj_praia = Praia.new(:nome => praia[:nome])
+				obj_praia = Praia.new(:nome => praia[:nome])
 
-			# Fotografia
-			url_imagem = npage.css('#defaultContent').first.attributes["src"].value
-			obj_praia.url_imagem = url_imagem unless url_imagem == 'http://imgs.sapo.pt/praias/images/SemFoto.gif'
+				# Fotografia
+				url_imagem = npage.css('#defaultContent').first.attributes["src"].value
+				obj_praia.url_imagem = url_imagem unless url_imagem == 'http://imgs.sapo.pt/praias/images/SemFoto.gif'
 
-			# Coordenadas
-			obj_praia.lat = npage.css('.latitude').first.to_s.scan(/>(.+)</).first.first
-			obj_praia.lng = npage.css('.longitude').first.to_s.scan(/>(.+)</).first.first
+				# Coordenadas
+				obj_praia.lat = npage.css('.latitude').first.to_s.scan(/>(.+)</).first.first
+				obj_praia.lng = npage.css('.longitude').first.to_s.scan(/>(.+)</).first.first
 
-			# Municipio e distrito
-			municipio = Municipality.find_by("center" => obj_praia.lng+","+obj_praia.lat, "range" => "1").first
-			obj_praia.municipio = Integer(municipio.id)
-			obj_praia.distrito = Integer(municipio.district_id)
+				# Municipio e distrito
+				municipio = Municipality.find_by("center" => obj_praia.lng+","+obj_praia.lat, "range" => "1").first
+				obj_praia.municipio = Integer(municipio.id)
+				obj_praia.distrito = Integer(municipio.district_id)
 
-			# Bandeira azul
-			obj_praia.bandeira_azul = ( npage.css('.ico-bandeira-azul').first != nil )
+				# Bandeira azul
+				obj_praia.bandeira_azul = ( npage.css('.ico-bandeira-azul').first != nil )
 
-			# Servicos
-			obj_praia.servicos = []
-			lista_servicos = npage.css('.ico-servicos .services li')
-			lista_servicos.each do |servico|
-				obj_praia.servicos << Servico.new(:nome => servico.to_s.scan(/>(.+)</).first.first)
+				# Servicos
+				obj_praia.servicos = []
+				lista_servicos = npage.css('.ico-servicos .services li')
+				lista_servicos.each do |servico|
+					obj_praia.servicos << Servico.new(:nome => servico.to_s.scan(/>(.+)</).first.first)
+				end
+				tipos_servicos.each do |tipo_servico|
+					obj_praia.servicos << Servico.new(:nome => tipo_servico[:nome]) if npage.css('.'+tipo_servico[:class]).first
+				end
+
+				obj_praia.save
+				puts praia[:nome]
+			rescue
 			end
-			tipos_servicos.each do |tipo_servico|
-				obj_praia.servicos << Servico.new(:nome => tipo_servico[:nome]) if npage.css('.'+tipo_servico[:class]).first
-			end
-
-			obj_praia.save
-			puts praia[:nome]
 		end
 
 	end

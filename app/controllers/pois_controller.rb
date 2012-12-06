@@ -31,8 +31,6 @@ class PoisController < ApplicationController
 	def show
 		@local = Local.find(params[:id])
 		resposta = {:local => @local, :servicos => @local.servicos}
-		@district = 0
-		@category = 6
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }

@@ -61,6 +61,10 @@
 	</div>
 
 	<script>
+		var map;
+		var lat = 0;
+		var lng = 0;
+
 		function select_informacoes() {
 			$('#modal-informacoes').show();
 			$('#modal-localizacao').hide();
@@ -73,6 +77,16 @@
 			$('#modal-localizacao').show();
 			$('#tab-informacoes').attr('class', '');
 			$('#tab-localizacao').attr('class', 'active');
+
+			google.maps.event.trigger(mapa, 'resize');
+			map = new GMaps({
+				div: '#mapa',
+				lat: lat,
+				lng: lng
+			}).addMarker({
+				lat: lat,
+				lng: lng
+			});
 		}
 
 		function show_modal(id) {
@@ -83,7 +97,7 @@
 			$('#modal-localizacao').text('');
 			select_informacoes();
 			$('#myModal').modal('show');
-			var jqxhr = $.getJSON("http://localhost:3000/pois/"+id+".json", function() {
+			var jqxhr = $.getJSON("/pois/"+id+".json", function() {
 				var r = JSON.parse(jqxhr.responseText);
 				$('#myModal h3').text(r.local.nome);
 
@@ -104,11 +118,17 @@
 
 				// Localizacao
 				var localizacao = "";
-				url_localizacao = 'http://www.openstreetmap.org/export/embed.html?bbox='+(r.local.lng-0.07)+','+(r.local.lat-0.05)+','+(r.local.lng-(-0.07))+','+(r.local.lat-(-0.05))+'&marker='+r.local.lat+','+r.local.lng;
-				localizacao += '<p><iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="'+url_localizacao+'"></iframe></p>';
-				localizacao += '<p><a target="_blank" href="'+url_localizacao+'">Ver mapa em nova janela</a></p>';
+				localizacao += "<div id='mapa'></div>"
 				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+r.local.lat+"<br /><b>Longitude:</b> "+r.local.lng+"</p>";
 				$('#modal-localizacao').append(localizacao);
+				lat = r.local.lat;
+				lng = r.local.lng;
+				map = new GMaps({
+					div: '#mapa',
+					lat: lat,
+					lng: lng
+				});
+				$("#mapa").css("width", "100%").css("height", 250);
 			})
 			.error(function() { console.log(jqxhr); });
 		}
