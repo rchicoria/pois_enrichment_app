@@ -8,11 +8,14 @@ class PoisController < ApplicationController
 	RESULTS_PER_PAGE = 20
 	MAIN_URL = "http://www.lifecooler.com/"
 	REQUEST_URL = "http://www.lifecooler.com/edicoes/lifecooler/staticRedirect.asp?id=3003"
-	MATCH_MIN = 0.90
+	MATCH_MIN = 0.8
 
 	def index
-		all_pois = Poi.find_by(:district=>35, :category=>21)
+		all_pois = Poi.find_by(:district=>40, :category=>21)
 		
+		all_pois.each do |poi|
+			puts poi.name
+		end
 		source_objects = []
 		@pois = []
 
@@ -25,7 +28,7 @@ class PoisController < ApplicationController
 		d = ""
 
 		hash.each_with_index do |node,i|
-			if node.css('label').text.include?("Coimbra")
+			if node.css('label').text.include?("Lisboa")
 				d = node.css('input')[0].attributes["value"]
 			end
 		end
@@ -60,12 +63,18 @@ class PoisController < ApplicationController
 				obj = {}
 				obj_url = URI.encode(URI.escape(MAIN_URL+(node.attributes["href"].value.scan(/\.\.\/\.\.\/(.+)/))[0][0]),'[]')
 				puts obj_url
-				obj_page = RestClient.get(URI.encode(URI.escape(obj_url),'[]'))
+				begin
+					obj_page = RestClient.get(URI.encode(URI.escape(obj_url),'[]'))
+				rescue
+					next
+				end
 				n_obj_page = Nokogiri::HTML(obj_page)
 				obj["name"]= n_obj_page.css("h2.registo").text
 				obj["address"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/<span>(.+)<br.*>.*<br/)[0][0] rescue ""
 				obj["mun"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/.+<br.*>(.+)<br/)[0][0] rescue ""
-				source_objects << obj
+				if set_source_coordinates(obj)
+					source_objects << obj
+				end
 				#puts obj["address"].to_s+" "+obj["mun"].to_s
 			end
 
@@ -86,28 +95,27 @@ class PoisController < ApplicationController
 		
 
 		all_pois.each do |poi|
-			found, source, distance = -1, nil, -1
+			found, source, best_metric = -1, nil, 0.8
 			source_objects.each do |obj|
-				d_temp = jarow.getDistance(normalize_name(obj["name"],source_words), normalize_name(poi.name,pois_words) )
-				if d_temp > MATCH_MIN and (distance < d_temp or distance == -1)
-					distance = d_temp
-					poi.info = poi.name
-					poi.info2 = check_point_distance(poi, obj)
-					poi.name = obj["name"]
-					puts poi+" "+poi.name
+				name_dist = jarow.getDistance(normalize_name(obj["name"],source_words), normalize_name(poi.name,pois_words) )
+				point_dist = check_point_distance(poi, obj)
+				point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
+				calc_metric = name_dist*0.8 + (1-point_dist_calc/4000) * 0.2
+				if (best_metric < calc_metric)
+					best_metric = calc_metric
+					poi.info = obj["name"]
+					poi.info2 = point_dist
+					poi.info3 = calc_metric
 					found = 1
 				end
 			end
-			if found == 1
-				@pois << poi if found == 1
-				#source_objects.delete(poi.name)
-			end
+			@pois << poi if found == 1
 		end
 	end
 
 	private
 
-	def check_point_distance(poi, source)
+	def set_source_coordinates(source)
 		geographic_factory = RGeo::Geographic.spherical_factory
 		sub = source["address"].gsub(" ","+")+"+"+source["mun"].gsub(" ","+")
 		to_remove = {'ç'=>'c','á'=>'a','à'=>'a','ã'=>'a','é'=>'e','ê'=>'e','í'=>'i','ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u'}
@@ -120,28 +128,23 @@ class PoisController < ApplicationController
 
 		google_api = ("http://maps.googleapis.com/maps/api/geocode/json?address=#{sub}&sensor=false").encode('UTF-8')
 		puts URI.escape(google_api)
-		count =0
-		while(count<20)
-			begin
-				#puts open(google_api).read
-				latlng = JSON.parse(RestClient.get(URI.escape(google_api)))["results"][0]["geometry"]["location"]
-			rescue
-				puts "count"
-				count+=1
-				next
-			end
-			puts "passou"
-			break
-		end
-		if count == 20
-			return -1
+		begin
+			latlng = JSON.parse(RestClient.get(URI.escape(google_api)))["results"][0]["geometry"]["location"]
+		rescue
+			puts "====== Falhou ======="
+			return nil
 		end
 		lat = latlng["lat"].to_s
 		lng = latlng["lng"].to_s
-		source_point = geographic_factory.point(lng, lat)
-		puts "tice "+poi.geom_feature.to_s
-		puts "life "+source_point.to_s
-		distance = source_point.distance(poi.geom_feature)
+		source["latlng"] = geographic_factory.point(lng, lat)
+		source["latlng"]
+	end
+
+	def check_point_distance(poi, source)
+		#puts "tice "+poi.geom_feature.to_s
+		#puts "life "+source_point.to_s
+		distance = source["latlng"].distance(poi.geom_feature)
+		distance
 	end
 
 	def normalize_name(name, words)
