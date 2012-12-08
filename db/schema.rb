@@ -21,6 +21,10 @@ ActiveRecord::Schema.define(:version => 20121123041940) do
     t.string  "type"
     t.integer "municipio"
     t.integer "distrito"
+    t.string  "descricao"
+    t.string  "telefone"
+    t.string  "website"
+    t.string  "horario"
     t.boolean "bandeira_azul"
   end
 

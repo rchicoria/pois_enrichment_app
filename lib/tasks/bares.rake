@@ -61,22 +61,36 @@ namespace :db do
 					next
 				end
 				n_obj_page = Nokogiri::HTML(obj_page)
+
+				# Nome
 				obj["nome"]= n_obj_page.css("h2.registo").text
+
+				# Imagem
 				obj["url_imagem"] = n_obj_page.css("div.registo_content img.img_reg").first.to_s.scan(/src="(.+)" alt/)[0][0] rescue ""
+				
+				# Descrição
 				obj["descricao"] = n_obj_page.css("div.registo_content p").first.to_s.scan(/p>(.+)</)[0][0] rescue ""
+				
+				# Telefone
 				obj["telefone"] = ""
 				n_obj_page.css("div.info_contactos div span").each do |span|
 					obj["telefone"] = span.to_s.scan(/(\d+)/)[-1][0] rescue "" if obj["telefone"].length < 9
 				end
 				obj["telefone"] = "" if obj["telefone"].length < 9
+
+				# Website
 				obj["website"] = n_obj_page.css("div.info_contactos div span.url a").first.to_s.scan(/href="(.+)" target/)[0][0] rescue ""
+				
+				# Horário
 				obj["horario"] = ""
 				n_obj_page.css("div.mais_info_txt p").each do |p|
 					horario = p.to_s.scan(/de Funcionamento:<\/span>(.+)<\/p>/)[0][0] rescue ""
 					obj["horario"] = horario if horario.length > 0
 				end
 
-				#puts "\n===== " + obj["nome"] + " ====="
+				bares << obj
+
+				puts obj["nome"]
 				#puts obj["url_imagem"]
 				#puts obj["descricao"]
 				#puts obj["telefone"]
@@ -86,58 +100,20 @@ namespace :db do
 
 			pag+=1
 
-		end while(pag<=pags)
+		end while(pag<=1)#pags)
 
-		# 	# Para cada praia
-		# 	lista = npage.css('.results-list ul li .title-details a')
-		# 	lista.each do |praia|
-		# 		praias << {:url => praia.attributes["href"].value,
-		# 				   :nome => praia.attributes["title"].value}
-		# 	end
+		# Guardar dados de cada bar
+		bares.each do |bar|
+			obj_bar = Bar.new(:nome => bar["nome"])
+			obj_bar.url_imagem = bar["url_imagem"]
+			obj_bar.descricao = bar["descricao"] if bar["descricao"].length > 0
+			obj_bar.telefone = bar["telefone"] if bar["telefone"].length > 0
+			obj_bar.website = bar["website"] if bar["website"].length > 0
+			obj_bar.horario = bar["horario"] if bar["horario"].length > 0
 
-		# 	proxima = npage.css('.pagination-nav ul li a.linkNext').first
-		# 	url = proxima.attributes["href"].value if proxima
-		# end while proxima
-
-		# # Guardar dados de cada praia
-		# praias.each do |praia|
-		# 	begin
-		# 		page = RestClient.get(URI.escape(praia[:url]))
-		# 		npage = Nokogiri::HTML(page)
-
-		# 		obj_praia = Praia.new(:nome => praia[:nome])
-
-		# 		# Fotografia
-		# 		url_imagem = npage.css('#defaultContent').first.attributes["src"].value
-		# 		obj_praia.url_imagem = url_imagem unless url_imagem == 'http://imgs.sapo.pt/praias/images/SemFoto.gif'
-
-		# 		# Coordenadas
-		# 		obj_praia.lat = npage.css('.latitude').first.to_s.scan(/>(.+)</).first.first
-		# 		obj_praia.lng = npage.css('.longitude').first.to_s.scan(/>(.+)</).first.first
-
-		# 		# Municipio e distrito
-		# 		municipio = Municipality.find_by("center" => obj_praia.lng+","+obj_praia.lat, "range" => "1").first
-		# 		obj_praia.municipio = Integer(municipio.id)
-		# 		obj_praia.distrito = Integer(municipio.district_id)
-
-		# 		# Bandeira azul
-		# 		obj_praia.bandeira_azul = ( npage.css('.ico-bandeira-azul').first != nil )
-
-		# 		# Servicos
-		# 		obj_praia.servicos = []
-		# 		lista_servicos = npage.css('.ico-servicos .services li')
-		# 		lista_servicos.each do |servico|
-		# 			obj_praia.servicos << Servico.new(:nome => servico.to_s.scan(/>(.+)</).first.first)
-		# 		end
-		# 		tipos_servicos.each do |tipo_servico|
-		# 			obj_praia.servicos << Servico.new(:nome => tipo_servico[:nome]) if npage.css('.'+tipo_servico[:class]).first
-		# 		end
-
-		# 		obj_praia.save
-		# 		puts praia[:nome]
-		# 	rescue
-		# 	end
-		# end
+			#obj_bar.save
+			puts obj_bar.inspect
+		end
 
 	end
 
