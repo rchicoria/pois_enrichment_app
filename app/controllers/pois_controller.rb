@@ -11,7 +11,8 @@ class PoisController < ApplicationController
 	MATCH_MIN = 0.8
 
 	def index
-		all_pois = Poi.find_by(:district=>40, :category=>21)
+		geographic_factory = RGeo::Geographic.spherical_factory
+		all_pois = Poi.find_by(:district=>35, :category=>158)
 		
 		all_pois.each do |poi|
 			puts poi.name
@@ -28,7 +29,7 @@ class PoisController < ApplicationController
 		d = ""
 
 		hash.each_with_index do |node,i|
-			if node.css('label').text.include?("Lisboa")
+			if node.css('label').text.include?("Coimbra")
 				d = node.css('input')[0].attributes["value"]
 			end
 		end
@@ -37,8 +38,8 @@ class PoisController < ApplicationController
 		pags = -1
 
 		begin
-			params = {"texto"=>"","pag"=>pag,"tipoLocal"=>"d","distrito"=>d,"funcao"=>"Pesquisar","cat"=>"374"}
-			url = "http://www.lifecooler.com/edicoes/lifecooler/directorio.asp?"
+			params = {"texto"=>"","pag"=>pag,"tipoLocal"=>"d","distrito"=>d,"funcao"=>"Pesquisar","cat"=>"19"}
+			url = "http://www.lifecooler.com/edicoes/lifecooler/restaurantes.asp?"
 			params.each_with_index do |(k,v),i|
 				url += k+"="+v.to_s
 				if i < params.length-1
@@ -72,7 +73,9 @@ class PoisController < ApplicationController
 				obj["name"]= n_obj_page.css("h2.registo").text
 				obj["address"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/<span>(.+)<br.*>.*<br/)[0][0] rescue ""
 				obj["mun"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/.+<br.*>(.+)<br/)[0][0] rescue ""
-				if set_source_coordinates(obj)
+				db_poi = PoiCoordinates.find_by_uri(obj_url.to_s)
+				if db_poi
+					obj["latlng"] = geographic_factory.point(db_poi.lng, db_poi.lat)
 					source_objects << obj
 				end
 				#puts obj["address"].to_s+" "+obj["mun"].to_s
@@ -95,7 +98,7 @@ class PoisController < ApplicationController
 		
 
 		all_pois.each do |poi|
-			found, source, best_metric = -1, nil, 0.8
+			found, source, best_metric = -1, nil, 0.5
 			source_objects.each do |obj|
 				name_dist = jarow.getDistance(normalize_name(obj["name"],source_words), normalize_name(poi.name,pois_words) )
 				point_dist = check_point_distance(poi, obj)
@@ -114,31 +117,6 @@ class PoisController < ApplicationController
 	end
 
 	private
-
-	def set_source_coordinates(source)
-		geographic_factory = RGeo::Geographic.spherical_factory
-		sub = source["address"].gsub(" ","+")+"+"+source["mun"].gsub(" ","+")
-		to_remove = {'ç'=>'c','á'=>'a','à'=>'a','ã'=>'a','é'=>'e','ê'=>'e','í'=>'i','ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u'}
-		sub = sub.encode('UTF-8')
-		to_remove.each do |k,v|
-			k=k.encode('UTF-8')
-			v=v.encode('UTF-8')
-			sub = sub.gsub(k,v)
-		end
-
-		google_api = ("http://maps.googleapis.com/maps/api/geocode/json?address=#{sub}&sensor=false").encode('UTF-8')
-		puts URI.escape(google_api)
-		begin
-			latlng = JSON.parse(RestClient.get(URI.escape(google_api)))["results"][0]["geometry"]["location"]
-		rescue
-			puts "====== Falhou ======="
-			return nil
-		end
-		lat = latlng["lat"].to_s
-		lng = latlng["lng"].to_s
-		source["latlng"] = geographic_factory.point(lng, lat)
-		source["latlng"]
-	end
 
 	def check_point_distance(poi, source)
 		#puts "tice "+poi.geom_feature.to_s
