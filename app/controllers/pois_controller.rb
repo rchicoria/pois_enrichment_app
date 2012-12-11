@@ -11,13 +11,17 @@ class PoisController < ApplicationController
 	MATCH_MIN = 0.8
 
 	def index
+		monumentos = [41,42,56,96,119,323,95]
+		restaurantes = [158,50]
+		parques = [100,108,326,128,130,129]
+		bares = [301, 209, 21, 61]
+		cultura = [16,37,45,80,107,279,120]
 		geographic_factory = RGeo::Geographic.spherical_factory
-		all_pois = Poi.find_by(:district=>35, :category=>158)
-		
-		all_pois.each do |poi|
-			puts poi.name
+		all_pois = []
+		monumentos.each do |id|
+			all_pois += Poi.find_by(:district=>35, :category=>id)
 		end
-		source_objects = []
+
 		@pois = []
 
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
@@ -34,79 +38,16 @@ class PoisController < ApplicationController
 			end
 		end
 
-		pag = 1
-		pags = -1
-
-		begin
-			params = {"texto"=>"","pag"=>pag,"tipoLocal"=>"d","distrito"=>d,"funcao"=>"Pesquisar","cat"=>"19"}
-			url = "http://www.lifecooler.com/edicoes/lifecooler/restaurantes.asp?"
-			params.each_with_index do |(k,v),i|
-				url += k+"="+v.to_s
-				if i < params.length-1
-					url += "&"
-				end
-			end
-
-			puts URI.encode(URI.escape(url),'[]')
-			page = RestClient.get(URI.encode(URI.escape(url),'[]'))
-
-			npage = Nokogiri::HTML(page)
-			nodes = npage.css('#maincol div.col_int_esq span.resultados')
-			if pag==1
-				nodes.each do |node|
-					pags = ((node.text.scan(/[A-z]+ ([0-9]+) [A-z]+/)[0][0].to_i)/RESULTS_PER_PAGE).ceil
-				end
-			end
-
-			nodes = npage.css('#maincol div.col_int_esq span.rpl_nome a')
-
-			nodes.each do |node|
-				obj = {}
-				obj_url = URI.encode(URI.escape(MAIN_URL+(node.attributes["href"].value.scan(/\.\.\/\.\.\/(.+)/))[0][0]),'[]')
-				puts obj_url
-				begin
-					obj_page = RestClient.get(URI.encode(URI.escape(obj_url),'[]'))
-				rescue
-					next
-				end
-				n_obj_page = Nokogiri::HTML(obj_page)
-				obj["name"]= n_obj_page.css("h2.registo").text
-				obj["address"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/<span>(.+)<br.*>.*<br/)[0][0] rescue ""
-				obj["mun"] = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/.+<br.*>(.+)<br/)[0][0] rescue ""
-				db_poi = PoiCoordinates.find_by_uri(obj_url.to_s)
-				if db_poi
-					obj["latlng"] = geographic_factory.point(db_poi.lng, db_poi.lat)
-					source_objects << obj
-				end
-				#puts obj["address"].to_s+" "+obj["mun"].to_s
-			end
-
-			pag+=1
-			puts "new poi"
-
-		end while(pag<=pags)
-
-		source_names = source_objects.dup
-		source_names.map! {|x| x["name"]}
-
-		source_words = get_reject_words(source_names)
-
-		pois_names = all_pois.dup
-		pois_names.map! {|x| x.name}
-
-		pois_words = get_reject_words(pois_names)
-		
-
 		all_pois.each do |poi|
-			found, source, best_metric = -1, nil, 0.5
-			source_objects.each do |obj|
-				name_dist = jarow.getDistance(normalize_name(obj["name"],source_words), normalize_name(poi.name,pois_words) )
+			found, source, best_metric = -1, nil, 0.85
+			PoiCoordinates.all.each do |obj|
+				name_dist = jarow.getDistance(normalize_name(obj.name), normalize_name(poi.name) )
 				point_dist = check_point_distance(poi, obj)
 				point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
 				calc_metric = name_dist*0.8 + (1-point_dist_calc/4000) * 0.2
 				if (best_metric < calc_metric)
 					best_metric = calc_metric
-					poi.info = obj["name"]
+					poi.info = obj
 					poi.info2 = point_dist
 					poi.info3 = calc_metric
 					found = 1
@@ -114,44 +55,35 @@ class PoisController < ApplicationController
 			end
 			@pois << poi if found == 1
 		end
+
+		found_pois = []
+
+		@pois.sort!{|a,b| a.info3<=>b.info3}
+		(@pois.length-1).downto(0) do |i|
+			if found_pois.include? @pois[i].info
+				@pois.delete(@pois[i])
+			else
+				found_pois << @pois[i].info
+			end 
+		end
 	end
 
 	private
 
 	def check_point_distance(poi, source)
-		#puts "tice "+poi.geom_feature.to_s
-		#puts "life "+source_point.to_s
-		distance = source["latlng"].distance(poi.geom_feature)
+		geographic_factory = RGeo::Geographic.spherical_factory
+		point = geographic_factory.point(source.lng, source.lat)
+		distance = point.distance(poi.geom_feature)
 		distance
 	end
 
-	def normalize_name(name, words)
-		name = name.gsub(/[(,?!\'":.)]/, ' ').upcase.split(' ')
-		words.each_pair do |word,n|
-			name.delete(word)
+	def normalize_name(name)
+		name = name.gsub(/[(,?!\'":\.)]/, ' ').upcase
+		TICE_REJECT.each do |exp|
+			name.slice! exp.upcase
+			name.strip!
 		end
-
-		return name.join(" ")
-	end
-
-	def get_reject_words(names)
-
-		names.map! {|x| x.gsub(/[(,?!\'":.)]/, ' ').upcase.split(' ')}
-		word_freq = Hash.new(0)
-
-		names.each do |name| 
-			name.each {|x| word_freq[x] += 1}
-		end
-
-		new_word_freq = {}
-
-		word_freq.each_pair do |k,v|
-			if( v > (0.02 * word_freq.length) and v > 2)
-				new_word_freq[k] = v
-			end
-		end
-
-		new_word_freq
+		name
 	end
 
 end
