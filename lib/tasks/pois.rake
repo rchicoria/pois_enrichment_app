@@ -26,12 +26,12 @@ end
 
 namespace :db do
 
-	task :bares => :environment do
+	task :pois => :environment do
 
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :category=>id)
+				all_pois += Poi.find_by(:district=>35, :category=>id) if k == "Monumentos"
 			end
 		end
 
@@ -146,27 +146,46 @@ namespace :db do
 				obj["servicos"] = servicos if servicos.length > 0
 			end
 
+			# Para o ML
+			obj["texto_ml"] = n_obj_page.css("div.registo_content h3").first.to_s.scan(/h3>(.+)</)[0][0] rescue ""
+			obj["texto_ml"] += " " + obj["descricao"] + " "
+			n_obj_page.css("div.mais_info_txt p").each_with_index do |p, i|
+				if i < n_obj_page.css("div.mais_info_txt p").length-1
+					obj["texto_ml"] += p.to_s rescue ""
+				end
+			end
+			obj["texto_ml"].gsub!(/<[^>]+>/, ' ')
+			obj["texto_ml"] = obj["texto_ml"].encode('UTF-8')
+			obj["texto_ml"] = obj["texto_ml"].apply(:chunk, :segment, :tokenize)
+			obj["texto_ml"] = obj["texto_ml"].words
+			(obj["texto_ml"].length-1).downto(0) do |i|
+				obj["texto_ml"].delete_at(i) if STOPWORDS_PT.include? obj["texto_ml"][i].to_s.downcase or obj["texto_ml"][i].to_s.length < 2
+			end
+
+
 			bares << obj
 
 			puts "\n=========================================="
 			puts obj["nome"]
-			puts obj["url_imagem"]
-			puts obj["descricao"]
-			puts obj["telefone"]
-			puts obj["website"]
-			puts "Horario: " + obj["horario"]
+			# puts obj["url_imagem"]
+			# puts obj["descricao"]
+			# puts obj["telefone"]
+			# puts obj["website"]
+			# puts "Horario: " + obj["horario"]
 
-			puts "Especialidades: " + obj["especialidades"]
-			puts "Tipo de restaurante: " + obj["tipo_restaurante"]
-			puts "Preco medio: " + obj["preco_medio"]
+			# puts "Especialidades: " + obj["especialidades"]
+			# puts "Tipo de restaurante: " + obj["tipo_restaurante"]
+			# puts "Preco medio: " + obj["preco_medio"]
 
-			puts "Lotacao: " + obj["lotacao"]
-			puts "Tipo de Musica: " + obj["tipo_musica"]
+			# puts "Lotacao: " + obj["lotacao"]
+			# puts "Tipo de Musica: " + obj["tipo_musica"]
 
-			puts "Ano de construcao: " + obj["ano_construcao"]
+			# puts "Ano de construcao: " + obj["ano_construcao"]
 
-			puts "Servicos: " + obj["servicos"]
-			
+			# puts "Servicos: " + obj["servicos"]
+			temp = ""
+			obj["texto_ml"].each { |w| temp += w.to_s + " " }
+			puts temp
 			puts "==========================================\n"
 		end
 

@@ -31,6 +31,9 @@ gem 'rgeo'
 gem 'rgeo-geojson'
 gem 'nokogiri'
 gem 'fuzzy-string-match'
+gem 'treat'
+gem 'scalpel'
+gem 'stanford-core-nlp'
 
 
 # To use ActiveModel has_secure_password
