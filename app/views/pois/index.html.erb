@@ -14,15 +14,15 @@
 					<ul class="thumbnails">
 						<% col.each do |poi| %>
 							<li class="thumbnail">
-								<a href="#" <% if @category == 6 %>onclick="show_modal(<%= poi.id %>); return false;"<% end %>>
-									<% if @category == 6 and poi.url_imagem %>
+								<a href="#" <% if @category == "Praias" %>onclick="show_modal(<%= poi.id %>); return false;"<% end %>>
+									<% if @category == "Praias" and poi.url_imagem %>
 										<img src="<%= poi.url_imagem %>" alt="">
 									<% else %>
 										<img src="http://placehold.it/260x180" alt="">
 									<% end %>
 								</a>
 								<div class="caption">
-									<% if @category == 6 %>
+									<% if @category == "Praias" %>
 										<h4><%= poi.nome %></h4>
 										<p>Esta praia <%= "não " if not poi.bandeira_azul %>possui bandeira azul.</p>
 										<p>Distrito: <%= poi.distrito %></p>

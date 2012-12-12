@@ -20,6 +20,7 @@ namespace :db do
 		# Para cada zona
 		zonas.each do |zona|
 			url = REQUEST_URL + zona + '/'
+			puts zona
 
 			# Para cada página
 			begin

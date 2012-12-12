@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121123041940) do
+ActiveRecord::Schema.define(:version => 20121211223545) do
 
   create_table "locais", :force => true do |t|
     t.string  "nome"
@@ -25,7 +25,18 @@ ActiveRecord::Schema.define(:version => 20121123041940) do
     t.string  "telefone"
     t.string  "website"
     t.string  "horario"
+    t.string  "lotacao"
+    t.string  "tipo_musica"
     t.boolean "bandeira_azul"
+  end
+
+  create_table "poi_coordinates", :force => true do |t|
+    t.string   "name"
+    t.string   "lat"
+    t.string   "lng"
+    t.string   "uri"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "servicos", :force => true do |t|

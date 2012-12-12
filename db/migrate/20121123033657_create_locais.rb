@@ -13,6 +13,11 @@ class CreateLocais < ActiveRecord::Migration
       t.string  :website
       t.string  :horario
 
+      # Bares
+      t.string  :lotacao
+      t.string  :tipo_musica
+
+      # Praias
       t.boolean :bandeira_azul
     end
   end

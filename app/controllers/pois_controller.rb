@@ -16,7 +16,7 @@ class PoisController < ApplicationController
 			elsif @category == 6
 				Praia.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			else
-				Category.get_ond_category[@category][:ost].each do |id|
+				CATEGORIES[@category][:ost].each do |id|
 					if @district == 0
 						Poi.find_by(:category=>id).each { |poi| @pois << poi }
 					else

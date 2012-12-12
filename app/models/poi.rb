@@ -6,7 +6,7 @@ class Poi < AppModel
 
 	attr_accessor :id, :name, :geom_feature, :last_modified, :publication_date,
 	:start_time, :end_time, :parent_poi_id, :location_id, :street, :parish_id,
-	:municipality_id, :district_id, :country, :categories_id
+	:municipality_id, :district_id, :country, :categories_id, :info, :info2, :info3
 
 	REJECTED_PROPERTIES = ["distance"]
 

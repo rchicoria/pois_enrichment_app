@@ -30,6 +30,7 @@ gem 'rest-client'
 gem 'rgeo'
 gem 'rgeo-geojson'
 gem 'nokogiri'
+gem 'fuzzy-string-match'
 
 
 # To use ActiveModel has_secure_password

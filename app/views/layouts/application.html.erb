@@ -47,19 +47,16 @@
 				</li>
 				<li id="categoria" class="dropdown option hidden-phone">
 					<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-						<%= Category.get_ond_category[@category][:name] %>
+						<%= @category %>
 						<b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="?district=<%= @district %>&category=0">Top</a></li>
-						<li><a href="?district=<%= @district %>&category=1">Restaurantes</a></li>
-						<li><a href="?district=<%= @district %>&category=2">Bares</a></li>
-						<li><a href="?district=<%= @district %>&category=3">Monumentos</a></li>
-						<li><a href="?district=<%= @district %>&category=4">Parques</a></li>
-						<li><a href="?district=<%= @district %>&category=5">Cultura</a></li>
-						<li><a href="?district=<%= @district %>&category=6">Praias</a></li>
-						<li><a href="?district=<%= @district %>&category=7">Lazer</a></li>
-						<li><a href="?district=<%= @district %>&category=8">Todos...</a></li>
+						<li><a href="?district=<%= @district %>&category=Top">Top</a></li>
+						<li><a href="?district=<%= @district %>&category=Restaurantes">Restaurantes</a></li>
+						<li><a href="?district=<%= @district %>&category=Bares">Bares</a></li>
+						<li><a href="?district=<%= @district %>&category=Monumentos">Monumentos</a></li>
+						<li><a href="?district=<%= @district %>&category=Cultura">Cultura</a></li>
+						<li><a href="?district=<%= @district %>&category=Praias">Praias</a></li>
 					</ul>
 				</li>
 			</ul>

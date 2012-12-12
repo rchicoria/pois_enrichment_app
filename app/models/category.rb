@@ -8,29 +8,6 @@ class Category < AppModel
 
   REJECTED_PROPERTIES = []
 
-  # abstraction layer to map OST categories into OND? categories
-  CATEGORIES = [{:name => "Top", :ost => []},
-                {:name => "Restaurantes", :ost => [50, 158]},
-                {:name => "Bares", :ost => [301, 209, 21, 61]},
-                {:name => "Monumentos", :ost => [41, 42, 56, 96, 119, 323, 95]},
-                {:name => "Parques", :ost => [100, 108, 326, 128, 130, 129]},
-                {:name => "Cultura", :ost => [16, 37, 45, 80, 107, 279, 120]},
-                {:name => "Praias", :ost => [149, 150]},
-                {:name => "Lazer", :ost => [32, 40, 82, 85, 297]},
-                {:name => "Todos...", :ost => []}
-              ]
-  def self.get_ond_category
-    if CATEGORIES[0][:ost].length == 0
-      (1..7).each do |i|
-        CATEGORIES[i][:ost].each do |id|
-          CATEGORIES[0][:ost] << id
-          CATEGORIES[8][:ost] << id
-        end
-      end
-    end
-    return CATEGORIES
-  end
-
   def self.model_name
     "pois/categories"
   end
