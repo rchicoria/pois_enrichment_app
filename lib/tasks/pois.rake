@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'open-uri'
 require 'fuzzystringmatch'
 
@@ -38,7 +39,7 @@ namespace :db do
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :category=>id)
+				all_pois += Poi.find_by(:district=>35, :category=>id) if k == "Monumentos"
 			end
 		end
 
@@ -223,6 +224,10 @@ namespace :db do
 		Categoria.create(:nome => "Cultura") unless Categoria.find_by_nome("Cultura")
 		# Fazer reset aos dados aprendidos
 		Token.delete_all
+		tokens[Categoria.find_by_nome("Restaurantes").id] = {}
+		tokens[Categoria.find_by_nome("Bares").id] = {}
+		tokens[Categoria.find_by_nome("Monumentos").id] = {}
+		tokens[Categoria.find_by_nome("Cultura").id] = {}
 
 		# Guardar dados de cada POI
 		pois_lc.each do |poi|
@@ -230,40 +235,40 @@ namespace :db do
 			categoria = Categoria.find_by_nome("Restaurantes")
 
 			if CATEGORIES["Restaurantes"].index(cat_id)
-				obj_poi = Restaurante.new(:nome => poi["nome"])
-				obj_poi.especialidades = poi["especialidades"] if poi["especialidades"].length > 0
-				obj_poi.tipo_restaurante = poi["tipo_restaurante"] if poi["tipo_restaurante"].length > 0
-				obj_poi.preco_medio = poi["preco_medio"] if poi["preco_medio"].length > 0
-				obj_poi.lotacao = poi["lotacao"] if poi["lotacao"].length > 0
+				obj_poi = Restaurante.new(:nome => poi["nome"].encode('UTF-8'))
+				obj_poi.especialidades = poi["especialidades"].encode('UTF-8') if poi["especialidades"].length > 0
+				obj_poi.tipo_restaurante = poi["tipo_restaurante"].encode('UTF-8') if poi["tipo_restaurante"].length > 0
+				obj_poi.preco_medio = poi["preco_medio"].encode('UTF-8') if poi["preco_medio"].length > 0
+				obj_poi.lotacao = poi["lotacao"].encode('UTF-8') if poi["lotacao"].length > 0
 				# ML
 				categoria = Categoria.find_by_nome("Restaurantes")
 
 			elsif CATEGORIES["Bares"].index(cat_id)
-				obj_poi = Bar.new(:nome => poi["nome"])
-				obj_poi.lotacao = poi["lotacao"] if poi["lotacao"].length > 0
-				obj_poi.tipo_musica = poi["tipo_musica"] if poi["tipo_musica"].length > 0
+				obj_poi = Bar.new(:nome => poi["nome"].encode('UTF-8'))
+				obj_poi.lotacao = poi["lotacao"].encode('UTF-8') if poi["lotacao"].length > 0
+				obj_poi.tipo_musica = poi["tipo_musica"].encode('UTF-8') if poi["tipo_musica"].length > 0
 				# ML
 				categoria = Categoria.find_by_nome("Bares")
 
 			elsif CATEGORIES["Monumentos"].index(cat_id)
-				obj_poi = Monumento.new(:nome => poi["nome"])
-				obj_poi.ano_construcao = poi["ano_construcao"] if poi["ano_construcao"].length > 0
+				obj_poi = Monumento.new(:nome => poi["nome"].encode('UTF-8'))
+				obj_poi.ano_construcao = poi["ano_construcao"].encode('UTF-8') if poi["ano_construcao"].length > 0
 				# ML
 				categoria = Categoria.find_by_nome("Monumentos")
 
 			elsif CATEGORIES["Cultura"].index(cat_id)
-				obj_poi = Cultura.new(:nome => poi["nome"])
-				obj_poi.servicos_cultura = poi["servicos"] if poi["servicos"].length > 0
+				obj_poi = Cultura.new(:nome => poi["nome"].encode('UTF-8'))
+				obj_poi.servicos_cultura = poi["servicos"].encode('UTF-8') if poi["servicos"].length > 0
 				# ML
 				categoria = Categoria.find_by_nome("Cultura")
 			end
 
 			# Definir atributos genéricos Lifecooler
-			obj_poi.url_imagem = poi["url_imagem"]
-			obj_poi.descricao = poi["descricao"] if poi["descricao"].length > 0
-			obj_poi.telefone = poi["telefone"] if poi["telefone"].length > 0
-			obj_poi.website = poi["website"] if poi["website"].length > 0
-			obj_poi.horario = poi["horario"] if poi["horario"].length > 0
+			obj_poi.url_imagem = poi["url_imagem"].encode('UTF-8')
+			obj_poi.descricao = poi["descricao"].encode('UTF-8') if poi["descricao"].length > 0
+			obj_poi.telefone = poi["telefone"].encode('UTF-8') if poi["telefone"].length > 0
+			obj_poi.website = poi["website"].encode('UTF-8') if poi["website"].length > 0
+			obj_poi.horario = poi["horario"].encode('UTF-8') if poi["horario"].length > 0
 
 			# Definir atributos genéricos TICE
 			obj_poi.lat = poi["poi_tice"].geom_feature.y
@@ -274,10 +279,10 @@ namespace :db do
 			# Machine Learning
 			poi["texto_ml"].each do |w|
 				name = w.to_s
-				if tokens[name]
-					tokens[name] += 1
+				if tokens[categoria.id][name]
+					tokens[categoria.id][name] += 1
 				else
-					tokens[name] = 1
+					tokens[categoria.id][name] = 1
 				end
 			end
 
@@ -285,33 +290,35 @@ namespace :db do
 			obj_poi.save
 			puts obj_poi.inspect
 		end
-		
-		tokens.each do |k,v|
-			token = Token.find_by_name(k)
-			if token
-				token.freq += v
-			else
-				token = Token.new(:name => k, :freq => v, :category_id => categoria.id)
+
+		tokens.each do |k_cat,v_cat|
+			v_cat.each do |k_token,v_token|
+				token = Token.find_by_name(k_token)
+				if token
+					token.freq += v_token
+				else
+					token = Token.new(:name => k_token.encode('UTF-8'), :freq => v_token, :category_id => k_cat)
+				end
+				token.save
 			end
-			token.save
 		end
 
-		# puts "\n======== Restaurantes ==========="
-		# Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
-		# 	puts "#{t.freq} " + t.name
-		# end
-		# puts "\n======== Bares ==========="
-		# Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
-		# 	puts "#{t.freq} " + t.name
-		# end
-		# puts "\n======== Monumentos ==========="
-		# Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
-		# 	puts "#{t.freq} " + t.name
-		# end
-		# puts "\n======== Cultura ==========="
-		# Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
-		# 	puts "#{t.freq} " + t.name
-		# end
+		puts "\n======== Restaurantes ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Bares ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Monumentos ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Cultura ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
 
 	end
 
