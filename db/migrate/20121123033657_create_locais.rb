@@ -8,13 +8,13 @@ class CreateLocais < ActiveRecord::Migration
       t.string  :type
       t.integer :municipio
       t.integer :distrito
-      t.string  :descricao
+      t.text    :descricao
       t.string  :telefone
       t.string  :website
       t.string  :horario
 
       # Restaurantes
-      t.string  :especialidades
+      t.text    :especialidades
       t.string  :tipo_restaurante
       t.string  :preco_medio
 
