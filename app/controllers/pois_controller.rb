@@ -1,6 +1,14 @@
+require 'open-uri'
+require 'fuzzystringmatch'
+
 class PoisController < ApplicationController
 	DISTRICT_DEFAULT = 35
 	CATEGORY_DEFAULT = 2
+
+	REQUEST_URL = "http://www.lifecooler.com/edicoes/lifecooler/staticRedirect.asp?id=3003"
+	MAIN_URL = "http://www.lifecooler.com/"
+	RESULTS_PER_PAGE = 20
+	MATCH_MIN = 0.85
 
 	def index
 		@district = DISTRICT_DEFAULT
@@ -38,7 +46,7 @@ class PoisController < ApplicationController
 		end
 	end
 
-	def create
+	def add_poi
 		local = Local.new(:nome => params[:nome], :lat => params[:lat], :lng => params[:lng])
 
 		@pois = []
@@ -46,14 +54,16 @@ class PoisController < ApplicationController
 		
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
 
-		puts "Poi comparison"
 		best_metric = MATCH_MIN
+		nome_local = normalize_name(local.nome)
+		puts 
 		PoiCoordinates.all.each do |obj|
-			name_dist = jarow.getDistance(normalize_name(obj.name), normalize_name(local.nome) )
+			name_dist = jarow.getDistance(obj.name, nome_local)
 			point_dist = check_point_distance(local, obj)
 			point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
-			calc_metric = name_dist*0.8 + (1-point_dist_calc/4000) * 0.2
+			calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
 			if (best_metric < calc_metric)
+				puts "++++++"+obj.inspect
 				best_metric = calc_metric
 				local.info = obj
 				local.info2 = point_dist
@@ -72,6 +82,8 @@ class PoisController < ApplicationController
 				found_pois << @pois[i].info
 			end 
 		end
+
+		puts "======="+@pois.inspect
 
 		# Para cada POI
 		@pois.each do |poi|
@@ -195,6 +207,22 @@ class PoisController < ApplicationController
 			# puts "Servicos: " + obj["servicos"]
 			# puts obj["texto_ml"]
 			# puts "==========================================\n"
+		end
+
+		# Guardar dados de cada POI
+		pois_lc.each do |poi|
+			categorias = {}
+			tokens = Token.where(:name => poi["texto_ml"])
+			tokens.each do |token|
+				categorias[token.name] ||= 0.0
+				categorias[token.name] += token.freq/token.categoria.count
+			end
+			categorias = categorias.sort_by {|key, value| value}
+			categoria = categorias.last[0]
+			puts "==========="
+			puts poi["nome"]
+			puts categoria
+			puts "==========="
 		end
 
 

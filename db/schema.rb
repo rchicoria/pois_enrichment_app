@@ -11,12 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121214015135) do
+ActiveRecord::Schema.define(:version => 20121214054308) do
 
   create_table "categoria", :force => true do |t|
     t.string   "nome"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "count"
   end
 
   create_table "locais", :force => true do |t|
@@ -60,9 +61,9 @@ ActiveRecord::Schema.define(:version => 20121214015135) do
   create_table "tokens", :force => true do |t|
     t.string   "name"
     t.integer  "freq"
-    t.integer  "category_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.integer  "categoria_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
 end

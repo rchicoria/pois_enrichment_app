@@ -35,7 +35,7 @@ namespace :db do
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :category=>id)
+				all_pois += Poi.find_by(:district=>35, :categoria=>id)
 			end
 		end
 
@@ -267,27 +267,28 @@ namespace :db do
 				token = Token.find_by_name(name)
 				if token != nil
 					token.freq += 1
+					token.categoria.count += 1
 				else
-					token = Token.new(:name => name, :freq => 1, :category_id => categoria.id)
+					token = Token.new(:name => name, :freq => 1, :categoria_id => categoria.id)
 				end
 				token.save
 			end
 		end
 
 		puts "\n======== Restaurantes ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Bares ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Bares").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Monumentos ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Monumentos").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Cultura ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Cultura").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 
