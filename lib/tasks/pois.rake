@@ -255,7 +255,7 @@ namespace :db do
 			obj_poi.municipio = poi["poi_tice"].municipality.id
 			obj_poi.distrito = poi["poi_tice"].district.id
 
-			#obj_poi.save
+			obj_poi.save
 			puts obj_poi.inspect
 
 			# Machine Learning
