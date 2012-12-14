@@ -1,0 +1,2 @@
+class Restaurante < Local
+end

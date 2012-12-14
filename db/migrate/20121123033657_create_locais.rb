@@ -13,9 +13,20 @@ class CreateLocais < ActiveRecord::Migration
       t.string  :website
       t.string  :horario
 
+      # Restaurantes
+      t.string  :especialidades
+      t.string  :tipo_restaurante
+      t.string  :preco_medio
+
       # Bares
       t.string  :lotacao
       t.string  :tipo_musica
+
+      # Monumentos
+      t.string  :ano_construcao
+
+      # Cultura
+      t.string  :servicos_cultura
 
       # Praias
       t.boolean :bandeira_azul

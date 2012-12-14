@@ -6,7 +6,7 @@ MAIN_URL = "http://www.lifecooler.com/"
 RESULTS_PER_PAGE = 20
 MATCH_MIN = 0.85
 
-bares = []
+pois_lc = []
 
 def check_point_distance(poi, source)
 	geographic_factory = RGeo::Geographic.spherical_factory
@@ -31,7 +31,7 @@ namespace :db do
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :category=>id) if k == "Monumentos"
+				all_pois += Poi.find_by(:district=>35, :category=>id)
 			end
 		end
 
@@ -101,7 +101,7 @@ namespace :db do
 			# Horário
 			obj["horario"] = ""
 			n_obj_page.css("div.mais_info_txt p").each do |p|
-				horario = p.to_s.scan(/Hor.rio de [.+]:<\/span>(.+)<\/p>/)[0][0] rescue ""
+				horario = p.to_s.scan(/Hor.rio de .+:<\/span>(.+)<\/p>/)[0][0] rescue ""
 				obj["horario"] = horario if horario.length > 0
 			end
 
@@ -159,13 +159,17 @@ namespace :db do
 			obj["texto_ml"] = obj["texto_ml"].apply(:chunk, :segment, :tokenize)
 			obj["texto_ml"] = obj["texto_ml"].words
 			(obj["texto_ml"].length-1).downto(0) do |i|
-				obj["texto_ml"].delete_at(i) if STOPWORDS_PT.include? obj["texto_ml"][i].to_s.downcase or obj["texto_ml"][i].to_s.length < 2
+				if STOPWORDS_PT.include? obj["texto_ml"][i].to_s.downcase or obj["texto_ml"][i].to_s.length < 2
+					obj["texto_ml"].delete_at(i)
+				else
+					obj["texto_ml"][i] = obj["texto_ml"][i].to_s.downcase
+				end
 			end
 
+			obj["poi_tice"] = poi
+			pois_lc << obj
 
-			bares << obj
-
-			puts "\n=========================================="
+			# puts "\n=========================================="
 			puts obj["nome"]
 			# puts obj["url_imagem"]
 			# puts obj["descricao"]
@@ -183,24 +187,96 @@ namespace :db do
 			# puts "Ano de construcao: " + obj["ano_construcao"]
 
 			# puts "Servicos: " + obj["servicos"]
-			temp = ""
-			obj["texto_ml"].each { |w| temp += w.to_s + " " }
-			puts temp
-			puts "==========================================\n"
+			# puts obj["texto_ml"]
+			# puts "==========================================\n"
 		end
 
+		# Criar categorias para o Machine Learning caso não existam
+		Categoria.create(:nome => "Restaurantes") unless Categoria.find_by_nome("Restaurantes")
+		Categoria.create(:nome => "Bares") unless Categoria.find_by_nome("Bares")
+		Categoria.create(:nome => "Monumentos") unless Categoria.find_by_nome("Monumentos")
+		Categoria.create(:nome => "Cultura") unless Categoria.find_by_nome("Cultura")
+		# Fazer reset aos dados aprendidos
+		Token.delete_all
 
-		# Guardar dados de cada bar
-		bares.each do |bar|
-			obj_bar = Bar.new(:nome => bar["nome"])
-			obj_bar.url_imagem = bar["url_imagem"]
-			obj_bar.descricao = bar["descricao"] if bar["descricao"].length > 0
-			obj_bar.telefone = bar["telefone"] if bar["telefone"].length > 0
-			obj_bar.website = bar["website"] if bar["website"].length > 0
-			obj_bar.horario = bar["horario"] if bar["horario"].length > 0
+		# Guardar dados de cada POI
+		pois_lc.each do |poi|
+			cat_id = poi["poi_tice"].categories.first.id
+			categoria = Categoria.find_by_nome("Restaurantes")
 
-			#obj_bar.save
-			#puts obj_bar.inspect
+			if CATEGORIES["Restaurantes"].index(cat_id)
+				obj_poi = Restaurante.new(:nome => poi["nome"])
+				obj_poi.especialidades = poi["especialidades"] if poi["especialidades"].length > 0
+				obj_poi.tipo_restaurante = poi["tipo_restaurante"] if poi["tipo_restaurante"].length > 0
+				obj_poi.preco_medio = poi["preco_medio"] if poi["preco_medio"].length > 0
+				obj_poi.lotacao = poi["lotacao"] if poi["lotacao"].length > 0
+				# ML
+				categoria = Categoria.find_by_nome("Restaurantes")
+
+			elsif CATEGORIES["Bares"].index(cat_id)
+				obj_poi = Bar.new(:nome => poi["nome"])
+				obj_poi.lotacao = poi["lotacao"] if poi["lotacao"].length > 0
+				obj_poi.tipo_musica = poi["tipo_musica"] if poi["tipo_musica"].length > 0
+				# ML
+				categoria = Categoria.find_by_nome("Bares")
+
+			elsif CATEGORIES["Monumentos"].index(cat_id)
+				obj_poi = Monumento.new(:nome => poi["nome"])
+				obj_poi.ano_construcao = poi["ano_construcao"] if poi["ano_construcao"].length > 0
+				# ML
+				categoria = Categoria.find_by_nome("Monumentos")
+
+			elsif CATEGORIES["Cultura"].index(cat_id)
+				obj_poi = Cultura.new(:nome => poi["nome"])
+				obj_poi.servicos_cultura = poi["servicos"] if poi["servicos"].length > 0
+				# ML
+				categoria = Categoria.find_by_nome("Cultura")
+			end
+
+			# Definir atributos genéricos Lifecooler
+			obj_poi.url_imagem = poi["url_imagem"]
+			obj_poi.descricao = poi["descricao"] if poi["descricao"].length > 0
+			obj_poi.telefone = poi["telefone"] if poi["telefone"].length > 0
+			obj_poi.website = poi["website"] if poi["website"].length > 0
+			obj_poi.horario = poi["horario"] if poi["horario"].length > 0
+
+			# Definir atributos genéricos TICE
+			obj_poi.lat = poi["poi_tice"].geom_feature.y
+			obj_poi.lng = poi["poi_tice"].geom_feature.x
+			obj_poi.municipio = poi["poi_tice"].municipality.id
+			obj_poi.distrito = poi["poi_tice"].district.id
+
+			#obj_poi.save
+			puts obj_poi.inspect
+
+			# Machine Learning
+			poi["texto_ml"].each do |w|
+				name = w.to_s
+				token = Token.find_by_name(name)
+				if token != nil
+					token.freq += 1
+				else
+					token = Token.new(:name => name, :freq => 1, :category_id => categoria.id)
+				end
+				token.save
+			end
+		end
+
+		puts "\n======== Restaurantes ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Bares ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Monumentos ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
+			puts "#{t.freq} " + t.name
+		end
+		puts "\n======== Cultura ==========="
+		Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
+			puts "#{t.freq} " + t.name
 		end
 
 	end

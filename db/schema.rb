@@ -11,7 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121211223545) do
+ActiveRecord::Schema.define(:version => 20121214015135) do
+
+  create_table "categoria", :force => true do |t|
+    t.string   "nome"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "locais", :force => true do |t|
     t.string  "nome"
@@ -25,8 +31,13 @@ ActiveRecord::Schema.define(:version => 20121211223545) do
     t.string  "telefone"
     t.string  "website"
     t.string  "horario"
+    t.string  "especialidades"
+    t.string  "tipo_restaurante"
+    t.string  "preco_medio"
     t.string  "lotacao"
     t.string  "tipo_musica"
+    t.string  "ano_construcao"
+    t.string  "servicos_cultura"
     t.boolean "bandeira_azul"
   end
 
