@@ -32,8 +32,6 @@ namespace :db do
 
 	task :pois => :environment do
 
-		puts "Inicio"
-
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
@@ -41,20 +39,25 @@ namespace :db do
 			end
 		end
 
-		puts "Fetced Pois"
+		puts "Fetched Pois"
 
 		@pois = []
 
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
 
-		all_pois.each do |poi|
-			puts "Poi comparison"
+		PoiCoordinates.all.each do |obj|
+			obj.name = normalize_name(obj.name)
+		end
+
+		all_pois.each_with_index do |poi, i|
+			puts i
 			best_metric = MATCH_MIN
+			nome_poi_tice = normalize_name(poi.name)
 			PoiCoordinates.all.each do |obj|
-				name_dist = jarow.getDistance(normalize_name(obj.name), normalize_name(poi.name) )
+				name_dist = jarow.getDistance(obj.name, nome_poi_tice)
 				point_dist = check_point_distance(poi, obj)
 				point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
-				calc_metric = name_dist*0.8 + (1-point_dist_calc/4000) * 0.2
+				calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
 				if (best_metric < calc_metric)
 					best_metric = calc_metric
 					poi.info = obj
