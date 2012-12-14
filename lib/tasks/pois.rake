@@ -37,7 +37,8 @@ namespace :db do
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :categoria=>id)
+				all_pois += Poi.find_by(:district=>35, :categoria=>id) if k == "Monumentos"
+				puts k+"=="
 			end
 		end
 

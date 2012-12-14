@@ -54,23 +54,31 @@ class PoisController < ApplicationController
 		
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
 
-		best_metric = MATCH_MIN
-		nome_local = normalize_name(local.nome)
-		puts 
-		PoiCoordinates.all.each do |obj|
-			name_dist = jarow.getDistance(obj.name, nome_local)
-			point_dist = check_point_distance(local, obj)
-			point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
-			calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
-			if (best_metric < calc_metric)
-				puts "++++++"+obj.inspect
-				best_metric = calc_metric
-				local.info = obj
-				local.info2 = point_dist
-				local.info3 = calc_metric
-			end
+		temp_lc = PoiCoordinates.all
+		temp_lc.each do |obj|
+			obj.name = normalize_name(obj.name)
 		end
-		@pois << local if best_metric > MATCH_MIN
+
+		best_metric = MATCH_MIN
+		nome_poi = normalize_name(local.nome)
+		if nome_poi.length > 0
+			temp_lc.each do |obj|
+				if obj.name.length > 0
+					name_dist = jarow.getDistance(obj.name, nome_poi)
+					point_dist = check_point_distance(local, obj)
+					point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
+					calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
+					if (best_metric < calc_metric)
+						best_metric = calc_metric
+						local.info = obj
+						local.info2 = point_dist
+						local.info3 = calc_metric
+					end
+				end
+			end
+			@pois << local if best_metric > MATCH_MIN
+		end
+
 
 		# Remover POIs repetidos do Lifecooler
 		found_pois = []
