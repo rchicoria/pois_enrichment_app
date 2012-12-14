@@ -17,16 +17,22 @@ end
 
 def normalize_name(name)
 	name = name.gsub(/[(,?!\'":\.)]/, ' ').upcase
-	TICE_REJECT.each do |exp|
-		name.slice! exp.upcase
-		name.strip!
+	name = name.apply(:chunk, :segment, :tokenize)
+	name = name.words
+	results_name = ""
+	(name.length-1).downto(0) do |i|
+		name.delete_at(i) if TICE_REJECT.include? name[i].to_s.downcase
+		results_name += name[i].to_s
+		results_name += " " if i > 0 
 	end
-	name
+	results_name
 end
 
 namespace :db do
 
 	task :pois => :environment do
+
+		puts "Inicio"
 
 		all_pois = []
 		CATEGORIES.each do |k,v|
@@ -35,11 +41,14 @@ namespace :db do
 			end
 		end
 
+		puts "Fetced Pois"
+
 		@pois = []
 
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
 
 		all_pois.each do |poi|
+			puts "Poi comparison"
 			best_metric = MATCH_MIN
 			PoiCoordinates.all.each do |obj|
 				name_dist = jarow.getDistance(normalize_name(obj.name), normalize_name(poi.name) )
