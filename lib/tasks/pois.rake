@@ -304,19 +304,19 @@ namespace :db do
 		end
 
 		puts "\n======== Restaurantes ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Bares ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Bares").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Monumentos ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Monumentos").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 		puts "\n======== Cultura ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
+		Token.where(:categoria_id => Categoria.find_by_nome("Cultura").id).each do |t|
 			puts "#{t.freq} " + t.name
 		end
 
