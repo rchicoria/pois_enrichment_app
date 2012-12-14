@@ -16,16 +16,18 @@ def check_point_distance(poi, source)
 end
 
 def normalize_name(name)
-	name = name.gsub(/[(,?!\'":\.)]/, ' ').upcase
+	name = name.gsub(/[(,?!\'":\.)]/, ' ')
 	name = name.apply(:chunk, :segment, :tokenize)
 	name = name.words
 	results_name = ""
 	(name.length-1).downto(0) do |i|
-		name.delete_at(i) if TICE_REJECT.include? name[i].to_s.downcase
-		results_name += name[i].to_s
-		results_name += " " if i > 0 
+		if TICE_REJECT.include? name[i].to_s.downcase
+			name.delete_at(i)
+		else
+			results_name = name[i].to_s.downcase + " " + results_name
+		end
 	end
-	results_name
+	results_name.strip
 end
 
 namespace :db do
@@ -45,27 +47,32 @@ namespace :db do
 
 		jarow = FuzzyStringMatch::JaroWinkler.create( :native )
 
-		PoiCoordinates.all.each do |obj|
+		temp_lc = PoiCoordinates.all
+		temp_lc.each do |obj|
 			obj.name = normalize_name(obj.name)
 		end
 
-		all_pois.each_with_index do |poi, i|
-			puts i
+		all_pois.each do |poi|
 			best_metric = MATCH_MIN
 			nome_poi_tice = normalize_name(poi.name)
-			PoiCoordinates.all.each do |obj|
-				name_dist = jarow.getDistance(obj.name, nome_poi_tice)
-				point_dist = check_point_distance(poi, obj)
-				point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
-				calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
-				if (best_metric < calc_metric)
-					best_metric = calc_metric
-					poi.info = obj
-					poi.info2 = point_dist
-					poi.info3 = calc_metric
+			if nome_poi_tice.length > 0
+				temp_lc.each do |obj|
+					if obj.name.length > 0
+						name_dist = jarow.getDistance(obj.name, nome_poi_tice)
+						point_dist = check_point_distance(poi, obj)
+						point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
+						calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
+						if (best_metric < calc_metric)
+							puts "MATCH " + obj.name
+							best_metric = calc_metric
+							poi.info = obj
+							poi.info2 = point_dist
+							poi.info3 = calc_metric
+						end
+					end
 				end
+				@pois << poi if best_metric > MATCH_MIN
 			end
-			@pois << poi if best_metric > MATCH_MIN
 		end
 
 		# Remover POIs repetidos do Lifecooler
@@ -78,6 +85,9 @@ namespace :db do
 				found_pois << @pois[i].info
 			end 
 		end
+
+		# Remover os locais que estavam na base de dados
+		Local.delete_all
 
 		# Para cada POI
 		@pois.each do |poi|
@@ -258,21 +268,29 @@ namespace :db do
 			obj_poi.municipio = poi["poi_tice"].municipality.id
 			obj_poi.distrito = poi["poi_tice"].district.id
 
-			obj_poi.save
-			puts obj_poi.inspect
-
 			# Machine Learning
+			tokens = {}
 			poi["texto_ml"].each do |w|
 				name = w.to_s
-				token = Token.find_by_name(name)
-				if token != nil
-					token.freq += 1
-					token.categoria.count += 1
+				if tokens[name]
+					tokens[name] += 1
 				else
-					token = Token.new(:name => name, :freq => 1, :categoria_id => categoria.id)
+					tokens[name] = 1
+				end
+			end
+			tokens.each do |k,v|
+				token = Token.find_by_name(k)
+				if token
+					token.freq += v
+				else
+					token = Token.new(:name => k, :freq => v, :category_id => categoria.id)
 				end
 				token.save
 			end
+
+			# Grava os POIs
+			obj_poi.save
+			puts obj_poi.inspect
 		end
 
 		puts "\n======== Restaurantes ==========="

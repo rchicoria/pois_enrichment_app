@@ -1,11 +1,15 @@
-Monument
-Place of worship
-Fast food
-Restaurante
-Castle
-Cafe
-Chapel
-Bar
-Lda
-Discoteca
-Museum
+monument
+place
+of
+worship
+fast
+food
+restaurante
+castle
+cafe
+chapel
+bar
+lda
+discoteca
+museum
+cervejaria
