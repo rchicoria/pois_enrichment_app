@@ -7,6 +7,7 @@ RESULTS_PER_PAGE = 20
 MATCH_MIN = 0.85
 
 pois_lc = []
+tokens = {}
 
 def check_point_distance(poi, source)
 	geographic_factory = RGeo::Geographic.spherical_factory
@@ -51,6 +52,8 @@ namespace :db do
 		temp_lc.each do |obj|
 			obj.name = normalize_name(obj.name)
 		end
+
+		puts "Now running matches..."
 
 		all_pois.each do |poi|
 			best_metric = MATCH_MIN
@@ -269,7 +272,6 @@ namespace :db do
 			obj_poi.distrito = poi["poi_tice"].district.id
 
 			# Machine Learning
-			tokens = {}
 			poi["texto_ml"].each do |w|
 				name = w.to_s
 				if tokens[name]
@@ -278,37 +280,38 @@ namespace :db do
 					tokens[name] = 1
 				end
 			end
-			tokens.each do |k,v|
-				token = Token.find_by_name(k)
-				if token
-					token.freq += v
-				else
-					token = Token.new(:name => k, :freq => v, :category_id => categoria.id)
-				end
-				token.save
-			end
 
 			# Grava os POIs
 			obj_poi.save
 			puts obj_poi.inspect
 		end
+		
+		tokens.each do |k,v|
+			token = Token.find_by_name(k)
+			if token
+				token.freq += v
+			else
+				token = Token.new(:name => k, :freq => v, :category_id => categoria.id)
+			end
+			token.save
+		end
 
-		puts "\n======== Restaurantes ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
-			puts "#{t.freq} " + t.name
-		end
-		puts "\n======== Bares ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
-			puts "#{t.freq} " + t.name
-		end
-		puts "\n======== Monumentos ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
-			puts "#{t.freq} " + t.name
-		end
-		puts "\n======== Cultura ==========="
-		Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
-			puts "#{t.freq} " + t.name
-		end
+		# puts "\n======== Restaurantes ==========="
+		# Token.where(:category_id => Categoria.find_by_nome("Restaurantes").id).each do |t|
+		# 	puts "#{t.freq} " + t.name
+		# end
+		# puts "\n======== Bares ==========="
+		# Token.where(:category_id => Categoria.find_by_nome("Bares").id).each do |t|
+		# 	puts "#{t.freq} " + t.name
+		# end
+		# puts "\n======== Monumentos ==========="
+		# Token.where(:category_id => Categoria.find_by_nome("Monumentos").id).each do |t|
+		# 	puts "#{t.freq} " + t.name
+		# end
+		# puts "\n======== Cultura ==========="
+		# Token.where(:category_id => Categoria.find_by_nome("Cultura").id).each do |t|
+		# 	puts "#{t.freq} " + t.name
+		# end
 
 	end
 
