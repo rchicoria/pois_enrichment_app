@@ -295,6 +295,8 @@ namespace :db do
 			v_cat.each do |k_token,v_token|
 				token = Token.find_by_name(k_token)
 				if token
+					token.categoria.count ||= 0
+					token.categoria.count += 1
 					token.freq += v_token
 				else
 					token = Token.new(:name => k_token.encode('UTF-8'), :freq => v_token, :categoria_id => k_cat)

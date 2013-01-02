@@ -61,10 +61,15 @@ class PoisController < ApplicationController
 
 		best_metric = MATCH_MIN
 		nome_poi = normalize_name(local.nome)
+		puts "local name: "+local.nome
+		puts "name POI: "+nome_poi 
+
 		if nome_poi.length > 0
 			temp_lc.each do |obj|
+				puts "obj name: "+obj.name
 				if obj.name.length > 0
 					name_dist = jarow.getDistance(obj.name, nome_poi)
+					puts obj.name+" / "+nome_poi
 					point_dist = check_point_distance(local, obj)
 					point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
 					calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
@@ -220,10 +225,11 @@ class PoisController < ApplicationController
 		# Guardar dados de cada POI
 		pois_lc.each do |poi|
 			categorias = {}
-			tokens = Token.where(:name => poi["texto_ml"])
+			tokens = Token.where(:name => poi["texto_ml"]).where("freq > 2")
 			tokens.each do |token|
-				categorias[token.name] ||= 0.0
-				categorias[token.name] += token.freq/token.categoria.count
+				puts token.inspect
+				categorias[token.categoria.nome] ||= 0.0
+				categorias[token.categoria.nome] += token.freq/token.categoria.count
 			end
 			categorias = categorias.sort_by {|key, value| value}
 			categoria = categorias.last[0]
@@ -247,15 +253,20 @@ class PoisController < ApplicationController
 	end
 
 	def normalize_name(name)
-		name = name.gsub(/[(,?!\'":\.)]/, ' ').upcase
+		temp = name
+		name = name.gsub(/[(,?!\'":\.)]/, ' ')
 		name = name.apply(:chunk, :segment, :tokenize)
 		name = name.words
 		results_name = ""
 		(name.length-1).downto(0) do |i|
-			name.delete_at(i) if TICE_REJECT.include? name[i].to_s.downcase
-			results_name += name[i].to_s
-			results_name += " " if i > 0 
+			if TICE_REJECT.include? name[i].to_s.downcase
+				puts name if temp =="Sev7n Bar"
+				name.delete_at(i)
+			else
+				results_name = name[i].to_s.downcase + " " + results_name
+				puts results_name if temp == "Sev7n Bar"
+			end
 		end
-		results_name
+		results_name.strip
 	end
 end
