@@ -3,7 +3,7 @@ require 'fuzzystringmatch'
 
 class PoisController < ApplicationController
 	DISTRICT_DEFAULT = 35
-	CATEGORY_DEFAULT = 2
+	CATEGORY_DEFAULT = "Top"
 
 	REQUEST_URL = "http://www.lifecooler.com/edicoes/lifecooler/staticRedirect.asp?id=3003"
 	MAIN_URL = "http://www.lifecooler.com/"
