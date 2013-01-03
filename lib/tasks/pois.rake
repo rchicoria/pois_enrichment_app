@@ -97,10 +97,11 @@ namespace :db do
 		@pois.each do |poi|
 			obj = {}
 			begin
-				obj_url = URI.encode(poi.info.uri)
+				obj_url = URI.encode(poi.info.uri.downcase)
 				obj_page = RestClient.get(URI.encode(URI.escape(obj_url),'[]'))
 			rescue
-				puts "ERROR fetching Lifecooler POI #{poi.info.uri}"
+				puts "ERROR fetching Lifecooler POI #{URI.encode(URI.escape(obj_url),'[]')}"
+				puts $!
 				next
 			end
 			n_obj_page = Nokogiri::HTML(obj_page)
