@@ -39,7 +39,7 @@ namespace :db do
 		all_pois = []
 		CATEGORIES.each do |k,v|
 			v.each do |id|
-				all_pois += Poi.find_by(:district=>35, :category=>id)
+				all_pois += Poi.find_by(:district=>40, :category=>id)
 			end
 		end
 
@@ -51,14 +51,14 @@ namespace :db do
 
 		temp_lc = PoiCoordinates.all
 		temp_lc.each do |obj|
-			obj.name = normalize_name(obj.name)
+			obj.name = normalize_name(obj.name) rescue next
 		end
 
 		puts "Now running matches..."
 
 		all_pois.each do |poi|
 			best_metric = MATCH_MIN
-			nome_poi_tice = normalize_name(poi.name)
+			nome_poi_tice = normalize_name(poi.name) rescue next
 			if nome_poi_tice.length > 0
 				temp_lc.each do |obj|
 					if obj.name.length > 0

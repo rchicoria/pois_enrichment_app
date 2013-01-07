@@ -15,7 +15,8 @@ namespace :db do
 		# cidades no Lifecooler
 		COIMBRA = 6
 		BRAGA = 3
-		DIST_ARRAY = [COIMBRA]#, BRAGA]
+		LISBOA = 11
+		DIST_ARRAY = [LISBOA]#, BRAGA]
 
 		MAIN_URL = "http://www.lifecooler.com/"
 
