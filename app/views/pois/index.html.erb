@@ -38,7 +38,11 @@
 									<% if poi.url_imagem  %>
 										<% if poi.url_imagem.length > 0 %>
 											<img src="<%= poi.url_imagem %>" width="100%" style="max-height: 250px" alt="">
+										<% else %>
+											<%= image_tag "sem_fotografia.png" %>
 										<% end %>
+									<% else %>
+										<%= image_tag "sem_fotografia.png" %>
 									<% end %>
 								</a>
 								<div class="caption">
@@ -54,55 +58,11 @@
 			<% end %>
 		<% end %>
 	</div>
-	<div class="modal hide" id="myModal" style="width: 95%; max-width: 530px; max-height: 80%">
-		<div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal">×</button>
-		    <h3></h3>
-		</div>
-		<div class="modal-tabs" style="background: #fafafa">
-			<ul class="nav nav-tabs">
-				<li id="tab-informacoes"><a style="cursor: pointer" onclick="select_informacoes(); return false;">Informações</a></li>
-				<li id="tab-localizacao"><a style="cursor: pointer" onclick="select_localizacao(); return false;">Localização</a></li>
-			</ul>
-		</div>
-		<div class="modal-body" style="overflow: hidden">
-			<div id="modal-informacoes"></div>
-			<div id="modal-localizacao"></div>
-		</div>
-		<div class="modal-footer">
-		    <a href="#" class="btn" data-dismiss="modal">Close</a>
-		    <a href="#" class="btn btn-primary">Save changes</a>
-		</div>
-	</div>
 
 	<script>
 		var map;
 		var lat = 0;
 		var lng = 0;
-
-		function select_informacoes() {
-			$('#modal-informacoes').show();
-			$('#modal-localizacao').hide();
-			$('#tab-informacoes').attr('class', 'active');
-			$('#tab-localizacao').attr('class', '');
-		}
-
-		function select_localizacao() {
-			$('#modal-informacoes').hide();
-			$('#modal-localizacao').show();
-			$('#tab-informacoes').attr('class', '');
-			$('#tab-localizacao').attr('class', 'active');
-
-			google.maps.event.trigger(mapa, 'resize');
-			map = new GMaps({
-				div: '#mapa',
-				lat: lat,
-				lng: lng
-			}).addMarker({
-				lat: lat,
-				lng: lng
-			});
-		}
 		
 		function show_poi(id) {
 			$('#c_poi .popup-title h3').text('');
@@ -119,6 +79,7 @@
 				
 				// Esquerda
 				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
+				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
 				if(r.local.website) $('#c_poi .popup-pic').append('<p><a target="_blank" href="'+r.local.website+'">Website</a></p>');
 				if(r.local.telefone) $('#c_poi .popup-pic').append('<p>'+r.local.telefone+'</p>');
 				if(r.local.descricao) $('#c_poi .popup-pic').append('<p>'+r.local.descricao+'</p>');
@@ -190,50 +151,6 @@
 			$('#c_poi .popup-text').text('');
 			$('#c_list').show();
 			$(document).scrollTop(pos_y);
-		}
-
-		function show_modal(id) {
-			$('#myModal h3').text('');
-			$('#myModal h3').append('&nbsp;');
-			$('#modal-informacoes').text('');
-			$('#modal-informacoes').append('<p align="center" style="margin-top: 20px"><img src="http://www.animale.com.br/wp-content/themes/animale2013/images/loading.gif" width="20"></p>');
-			$('#modal-localizacao').text('');
-			select_informacoes();
-			$('#myModal').modal('show');
-			var jqxhr = $.getJSON("/pois/"+id+".json", function() {
-				var r = JSON.parse(jqxhr.responseText);
-				$('#myModal h3').text(r.local.nome);
-
-				// Informacoes
-				var informacoes = "";
-				if (r.local.url_imagem) informacoes += "<p><img src='"+r.local.url_imagem+"'></p>";
-				/*if (r.local.bandeira_azul) informacoes += "<p>Esta praia tem bandeira azul.</p>";
-				else informacoes += "<p>Esta praia não tem bandeira azul.</p>";
-				if (r.servicos.length > 0) {
-					informacoes += "<p>Serviços disponíveis:</p><ul>";
-					for (var i in r.servicos) {
-						informacoes += "<li>"+r.servicos[i].nome+"</li>";
-					}
-					informacoes += "</ul>"
-				}*/
-				$('#modal-informacoes').text('');
-				$('#modal-informacoes').append(informacoes);
-
-				// Localizacao
-				var localizacao = "";
-				localizacao += "<div id='mapa'></div>"
-				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+r.local.lat+"<br /><b>Longitude:</b> "+r.local.lng+"</p>";
-				$('#modal-localizacao').append(localizacao);
-				lat = r.local.lat;
-				lng = r.local.lng;
-				map = new GMaps({
-					div: '#mapa',
-					lat: lat,
-					lng: lng
-				});
-				$("#mapa").css("width", "100%").css("height", 250);
-			})
-			.error(function() { console.log(jqxhr); });
 		}
 	</script>
 </div>
