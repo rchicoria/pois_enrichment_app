@@ -45,6 +45,14 @@ class PoisController < ApplicationController
 			format.json { render :json => resposta.to_json }
 		end
 	end
+	
+	def suggestions
+		@suggestions = Local.find(Integer(params[:id])).pois_perto
+		respond_to do |format|
+			format.xml { render :xml => @suggestions.to_xml }
+			format.json { render :json => @suggestions.to_json }
+		end
+	end
 
 	def add_poi
 		local = Local.new(:nome => params[:nome], :lat => params[:lat], :lng => params[:lng])

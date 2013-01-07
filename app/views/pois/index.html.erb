@@ -105,6 +105,9 @@
 		}
 		
 		function show_poi(id) {
+			$('#c_poi .popup-title h3').text('');
+			$('#c_poi .popup-pic').text('');
+			$('#c_poi .popup-text').text('');
 			$('#c_poi .popup-title h3').append('&nbsp;');
 			var pos_y = $(document).scrollTop();
 			$('#c_list').hide();
@@ -161,6 +164,18 @@
 					informacoes += "</ul>"
 					$('#c_poi .popup-text').append(informacoes);
 				}
+				
+				// Sugestões
+				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
+					var s = JSON.parse(jqxhr2.responseText);
+					if (s.length > 0) {
+						$('#c_poi .popup-text').append('<hr /><h3>A visitar por perto:</h3><ul>');
+						for (var i in s) {
+							$('#c_poi .popup-text').append("<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a></li>");
+						}
+						$('#c_poi .popup-text').append("</ul>");
+					}
+				});
 			});
 			
 			$('#pos_y').text(pos_y);
