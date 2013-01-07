@@ -3,7 +3,7 @@ require 'fuzzystringmatch'
 
 class PoisController < ApplicationController
 	DISTRICT_DEFAULT = 35
-	CATEGORY_DEFAULT = 2
+	CATEGORY_DEFAULT = "Top"
 
 	REQUEST_URL = "http://www.lifecooler.com/edicoes/lifecooler/staticRedirect.asp?id=3003"
 	MAIN_URL = "http://www.lifecooler.com/"
@@ -14,23 +14,23 @@ class PoisController < ApplicationController
 		@district = DISTRICT_DEFAULT
 		@category = CATEGORY_DEFAULT
 		@district = Integer(params[:district]) if params[:district] && Integer(params[:district])
-		@category = Integer(params[:category]) if params[:category] && Integer(params[:category])
+		@category = params[:category] if params[:category]
 		@pois = []
 		if params[:s]
 			@pois = Poi.find_by(:name=>params[:s])
 		else
-			if @category == 6 and @district == 0
-				Praia.all.each { |local| @pois << local }
-			elsif @category == 6
+			if @category == "Restaurantes"
+				Restaurante.where('distrito = ' + @district.to_s).each { |local| @pois << local }
+			elsif @category == "Bares"
+				Bar.where('distrito = ' + @district.to_s).each { |local| @pois << local }
+			elsif @category == "Monumentos"
+				Monumento.where('distrito = ' + @district.to_s).each { |local| @pois << local }
+			elsif @category == "Cultura"
+				Cultura.where('distrito = ' + @district.to_s).each { |local| @pois << local }
+			elsif @category == "Praias"
 				Praia.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			else
-				CATEGORIES[@category][:ost].each do |id|
-					if @district == 0
-						Poi.find_by(:category=>id).each { |poi| @pois << poi }
-					else
-						Poi.find_by(:district=>@district, :category=>id).each { |poi| @pois << poi }
-					end
-				end
+				Local.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			end
 		end
 		@districts = District.all
@@ -43,6 +43,14 @@ class PoisController < ApplicationController
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
 			format.json { render :json => resposta.to_json }
+		end
+	end
+	
+	def suggestions
+		@suggestions = Local.find(Integer(params[:id])).pois_perto
+		respond_to do |format|
+			format.xml { render :xml => @suggestions.to_xml }
+			format.json { render :json => @suggestions.to_json }
 		end
 	end
 
@@ -61,15 +69,10 @@ class PoisController < ApplicationController
 
 		best_metric = MATCH_MIN
 		nome_poi = normalize_name(local.nome)
-		puts "local name: "+local.nome
-		puts "name POI: "+nome_poi 
-
 		if nome_poi.length > 0
 			temp_lc.each do |obj|
-				puts "obj name: "+obj.name
 				if obj.name.length > 0
 					name_dist = jarow.getDistance(obj.name, nome_poi)
-					puts obj.name+" / "+nome_poi
 					point_dist = check_point_distance(local, obj)
 					point_dist_calc = (point_dist <= 4000 ? point_dist : 4000 )
 					calc_metric = name_dist * 0.8 + (1-point_dist_calc/4000) * 0.2
@@ -225,11 +228,10 @@ class PoisController < ApplicationController
 		# Guardar dados de cada POI
 		pois_lc.each do |poi|
 			categorias = {}
-			tokens = Token.where(:name => poi["texto_ml"]).where("freq > 2")
+			tokens = Token.where(:name => poi["texto_ml"])
 			tokens.each do |token|
-				puts token.inspect
-				categorias[token.categoria.nome] ||= 0.0
-				categorias[token.categoria.nome] += token.freq/token.categoria.count
+				categorias[token.name] ||= 0.0
+				categorias[token.name] += token.freq/token.categoria.count
 			end
 			categorias = categorias.sort_by {|key, value| value}
 			categoria = categorias.last[0]
@@ -253,20 +255,15 @@ class PoisController < ApplicationController
 	end
 
 	def normalize_name(name)
-		temp = name
-		name = name.gsub(/[(,?!\'":\.)]/, ' ')
+		name = name.gsub(/[(,?!\'":\.)]/, ' ').upcase
 		name = name.apply(:chunk, :segment, :tokenize)
 		name = name.words
 		results_name = ""
 		(name.length-1).downto(0) do |i|
-			if TICE_REJECT.include? name[i].to_s.downcase
-				puts name if temp =="Sev7n Bar"
-				name.delete_at(i)
-			else
-				results_name = name[i].to_s.downcase + " " + results_name
-				puts results_name if temp == "Sev7n Bar"
-			end
+			name.delete_at(i) if TICE_REJECT.include? name[i].to_s.downcase
+			results_name += name[i].to_s
+			results_name += " " if i > 0 
 		end
-		results_name.strip
+		results_name
 	end
 end

@@ -1,4 +1,4 @@
-API_URL = "https://www.ost.pt/rest/"
+API_URL = "https://api.ost.pt/"
 API_KEY = "key=jiwvircSWWiSmrYftHEBEyCxXOqAMyqHqjrQGsjW"
 
 # abstraction layer to map OST categories into OND? categories
