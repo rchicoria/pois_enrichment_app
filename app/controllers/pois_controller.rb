@@ -53,6 +53,18 @@ class PoisController < ApplicationController
 			format.json { render :json => @suggestions.to_json }
 		end
 	end
+	
+	def district
+		begin
+			@district = District.find_by(:range=>"1",:center=>params["lng"]+","+params["lat"])
+		rescue
+			@district = []
+		end
+		respond_to do |format|
+			format.xml { render :xml => @district.to_xml }
+			format.json { render :json => @district.to_json }
+		end
+	end
 
 	def add_poi
 		local = Local.new(:nome => params[:nome], :lat => params[:lat], :lng => params[:lng])
