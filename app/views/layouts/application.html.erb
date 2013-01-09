@@ -76,6 +76,9 @@
 	</script>
 
 	<%= yield %>
+	
+	<div id="curr_lat" style="display: none"></div>
+	<div id="curr_lng" style="display: none"></div>
 
 	<!-- Adicione ao final da sua página, antes da tag </body>, e substitua <your-app-id> -->
 	<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>-->
@@ -86,5 +89,16 @@
 
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script src="https://raw.github.com/HPNeo/gmaps/master/gmaps.js"></script>
+	
+	<script>
+	var lat = document.getElementById("curr_lat");
+	var lng = document.getElementById("curr_lng");
+	function showPosition(position) {
+	  lat.innerHTML=position.coords.latitude;
+	  lng.innerHTML=position.coords.longitude;
+	}
+	if (navigator.geolocation)
+	  navigator.geolocation.getCurrentPosition(showPosition);
+	</script>
 </body>
 </html>
