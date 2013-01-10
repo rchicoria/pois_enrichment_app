@@ -103,6 +103,15 @@
 			}
 		}
 		
+		function checkin(obj, id) {
+			obj.next().show();
+			obj.hide();
+			var jqxhr = $.getJSON("/checkin?id="+id, function() {
+				var r = JSON.parse(jqxhr.responseText);
+				$('#n_checkins').text(r);
+			});
+		}
+		
 		function show_poi(id) {
 			$('#c_poi .popup-title h3').text('');
 			$('#c_poi .popup-pic').text('');
@@ -119,9 +128,10 @@
 				// Esquerda
 				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
 				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
+				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p id="n_checkins">'+r.checkins+'</p><hr />');
 				if(r.local.website) $('#c_poi .popup-pic').append('<p><a target="_blank" href="'+r.local.website+'">Website</a></p>');
 				if(r.local.telefone) $('#c_poi .popup-pic').append('<p>'+r.local.telefone+'</p>');
-				if(r.local.descricao) $('#c_poi .popup-pic').append('<p>'+r.local.descricao+'</p>');
 				
 				// Direita
 				// Mapa
@@ -152,6 +162,7 @@
 				});
 				
 				// Metadata
+				if(r.local.descricao) $('#c_poi .popup-text').append('<p>'+r.local.descricao+'</p>');
 				if(r.local.tipo_restaurante) $('#c_poi .popup-text').append('<p><b>Tipo de restaurante:</b> '+r.local.tipo_restaurante+'</p>');
 				if(r.local.tipo_musica) $('#c_poi .popup-text').append('<p><b>Tipo de música:</b> '+r.local.tipo_musica+'</p>');
 				if(r.local.especialidades) $('#c_poi .popup-text').append('<p><b>Especialidades:</b> '+r.local.especialidades+'</p>');
@@ -172,14 +183,21 @@
 				// Sugestões
 				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
 					var s = JSON.parse(jqxhr2.responseText);
-					if (s.length > 0) {
-						$('#c_poi .popup-text').append('<hr /><h3>A visitar por perto:</h3><ul>');
-						for (var i in s) {
-							var texto = "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
-							texto += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
-							$('#c_poi .popup-text').append(texto+"</li>");
+					if (s.perto.length > 0) {
+						var sugestoes = '<hr /><div class="span4" style="margin-left: 0"><h3>A visitar por perto:</h3><ul style="list-style: none">';
+						for (var i in s.perto) {
+							sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.perto[i].id+"); return false;'>"+s.perto[i].nome+"</a>";
+							sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s.perto[i].lat, s.perto[i].lng, lat, lng)+"</span></li>";
 						}
-						$('#c_poi .popup-text').append("</ul>");
+						sugestoes += "</ul></div>";
+						if (s.mesma.length > 0) {
+							sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3><ul style="list-style: none">';
+							for (var j in s.mesma) {
+								sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.mesma[j].id+"); return false;'>"+s.mesma[j].nome+"</a></li>";
+							}
+							sugestoes += "</ul></div>";
+						}
+						$('#c_poi .popup-text').append(sugestoes);
 					}
 				});
 			});

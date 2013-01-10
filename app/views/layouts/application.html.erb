@@ -80,7 +80,7 @@
 	function showPosition(position) {
 	  $("#curr_lat").text(position.coords.latitude);
 	  $("#curr_lng").text(position.coords.longitude);
-	  console.log(position.coords.latitude+" "+position.coords.longitude);
+	  console.log($("#curr_lat").text()+" "+$("#curr_lng").text());
 	}
 	if (navigator.geolocation)
 	  navigator.geolocation.getCurrentPosition(showPosition);

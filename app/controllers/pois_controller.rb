@@ -41,7 +41,7 @@ class PoisController < ApplicationController
 
 	def show
 		@local = Local.find(params[:id])
-		resposta = {:local => @local, :servicos => @local.servicos}
+		resposta = {:local => @local, :servicos => @local.servicos, :checkins => @local.texto_checkins}
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
@@ -50,10 +50,23 @@ class PoisController < ApplicationController
 	end
 	
 	def suggestions
-		@suggestions = Local.find(Integer(params[:id])).pois_perto
+		@local = Local.find(Integer(params[:id]))
+		@perto = @local.pois_perto
+		@mesma = @local.mesma_categoria
+		categoria = @local.type
+		if categoria == "Cultura"
+			categoria = "Locais de #{categoria.downcase} recomendados"
+		elsif categoria == "Praia"
+			categoria = "#{categoria}s recomendadas"
+		elsif categoria == "Bar"
+			categoria = "#{categoria}es recomendados"
+		else
+			categoria = "#{categoria}s recomendados"
+		end
+		resposta = {:categoria => categoria, :perto => @perto, :mesma => @mesma}
 		respond_to do |format|
-			format.xml { render :xml => @suggestions.to_xml }
-			format.json { render :json => @suggestions.to_json }
+			format.xml { render :xml => resposta.to_xml }
+			format.json { render :json => resposta.to_json }
 		end
 	end
 	
@@ -66,6 +79,20 @@ class PoisController < ApplicationController
 		respond_to do |format|
 			format.xml { render :xml => @district.to_xml }
 			format.json { render :json => @district.to_json }
+		end
+	end
+	
+	def checkin
+		@local = Local.find(Integer(params[:id]))
+		begin
+			@local.checkins += 1
+		rescue
+			@local.checkins = 1
+		end
+		@local.save
+		respond_to do |format|
+			format.xml { render :xml => @local.texto_checkins.to_xml }
+			format.json { render :json => @local.texto_checkins.to_json }
 		end
 	end
 

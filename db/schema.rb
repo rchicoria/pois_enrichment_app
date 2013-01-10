@@ -12,7 +12,6 @@
 # It's strongly recommended to check this file into your version control system.
 
 ActiveRecord::Schema.define(:version => 20130110191556) do
-
   create_table "categoria", :force => true do |t|
     t.string   "nome"
     t.datetime "created_at", :null => false
@@ -65,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20130110191556) do
     t.string  "ano_construcao"
     t.string  "servicos_cultura"
     t.boolean "bandeira_azul"
+    t.integer "checkins"
   end
 
   create_table "poi_coordinates", :force => true do |t|
