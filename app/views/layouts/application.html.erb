@@ -77,11 +77,10 @@
 	<div id="curr_lng" style="display: none"></div>
 	
 	<script>
-	var lat = document.getElementById("curr_lat");
-	var lng = document.getElementById("curr_lng");
 	function showPosition(position) {
-	  lat.innerHTML=position.coords.latitude;
-	  lng.innerHTML=position.coords.longitude;
+	  $("#curr_lat").text(position.coords.latitude);
+	  $("#curr_lng").text(position.coords.longitude);
+	  console.log(position.coords.latitude+" "+position.coords.longitude);
 	}
 	if (navigator.geolocation)
 	  navigator.geolocation.getCurrentPosition(showPosition);

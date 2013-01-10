@@ -149,7 +149,7 @@
 						$('#c_poi .popup-text').append('<hr /><h3>A visitar por perto:</h3><ul>');
 						for (var i in s) {
 							var texto = "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
-							if ($('#curr_lat').text().length > 0) texto += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
+							texto += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
 							$('#c_poi .popup-text').append(texto+"</li>");
 						}
 						$('#c_poi .popup-text').append("</ul>");

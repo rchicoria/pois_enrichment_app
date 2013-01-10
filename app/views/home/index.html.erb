@@ -74,14 +74,11 @@
 		return true;
 	}
 	
-	var lat = document.getElementById("curr_lat");
-	var lng = document.getElementById("curr_lng");
 	function showPosition(position) {
-	  lat.innerHTML=position.coords.latitude;
-	  lng.innerHTML=position.coords.longitude;
-	  var curr_lat = parseFloat($("#curr_lat").text());
-	  var curr_lng = parseFloat($("#curr_lng").text());
-	  var jqxhr = $.getJSON("/district?lat="+curr_lat+"&lng="+curr_lng, function() {
+	  $("#curr_lat").text(position.coords.latitude);
+	  $("#curr_lng").text(position.coords.longitude);
+	  console.log(lat+" "+lng);
+	  var jqxhr = $.getJSON("/district?lat="+position.coords.latitude+"&lng="+position.coords.longitude, function() {
 		var resp = JSON.parse(jqxhr.responseText);
 		if (resp.length > 0) {
 			$("#li-district-"+resp[0].id).attr("class", "active");
