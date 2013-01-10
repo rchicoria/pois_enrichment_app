@@ -11,13 +11,38 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121214054308) do
+ActiveRecord::Schema.define(:version => 20130110191556) do
 
   create_table "categoria", :force => true do |t|
     t.string   "nome"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "count"
+  end
+
+  create_table "life_cooler_pois", :force => true do |t|
+    t.string   "nome"
+    t.string   "url_imagem"
+    t.string   "categoria_lc"
+    t.string   "subcategoria_lc"
+    t.string   "municipio"
+    t.string   "distrito"
+    t.text     "descricao"
+    t.string   "telefone"
+    t.string   "website"
+    t.string   "horario"
+    t.text     "especialidades"
+    t.string   "tipo_restaurante"
+    t.string   "preco_medio"
+    t.string   "lotacao"
+    t.string   "tipo_musica"
+    t.string   "ano_construcao"
+    t.string   "servicos_cultura"
+    t.boolean  "bandeira_azul"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.string   "street"
+    t.string   "url"
   end
 
   create_table "locais", :force => true do |t|
