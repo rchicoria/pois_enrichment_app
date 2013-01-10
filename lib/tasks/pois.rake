@@ -51,30 +51,22 @@ namespace :db do
 
 		temp_lc = PoiCoordinates.all
 		temp_lc.each do |obj|
-<<<<<<< HEAD
 			begin
 				obj.name = normalize_name(obj.name)
 			rescue
 				next
 			end
-=======
-			obj.name = normalize_name(obj.name) rescue next
->>>>>>> f2af643ac81e521c11fb7db836a7fe40694945d2
 		end
 
 		puts "Now running matches..."
 
 		all_pois.each do |poi|
 			best_metric = MATCH_MIN
-<<<<<<< HEAD
 			begin
 				nome_poi_tice = normalize_name(poi.name)
 			rescue
 				next
 			end
-=======
-			nome_poi_tice = normalize_name(poi.name) rescue next
->>>>>>> f2af643ac81e521c11fb7db836a7fe40694945d2
 			if nome_poi_tice.length > 0
 				temp_lc.each do |obj|
 					if obj.name.length > 0
