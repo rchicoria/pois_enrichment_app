@@ -184,13 +184,14 @@
 				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
 					var s = JSON.parse(jqxhr2.responseText);
 					if (s.length > 0) {
-						$('#c_poi .popup-text').append('<hr /><h3>A visitar por perto:</h3><ul>');
+						var sugestoes = '<hr /><div class="span4" style="margin-left: 0"><h3>A visitar por perto:</h3><ul style="list-style: none">';
 						for (var i in s) {
-							var texto = "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
-							texto += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
-							$('#c_poi .popup-text').append(texto+"</li>");
+							sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
+							sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
 						}
-						$('#c_poi .popup-text').append("</ul>");
+						sugestoes += "</ul></div>";
+						sugestoes += '<div class="span4"><h3>Sugestões personalizadas:</h3></div>';
+						$('#c_poi .popup-text').append(sugestoes);
 					}
 				});
 			});

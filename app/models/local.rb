@@ -4,6 +4,8 @@ class Local < ActiveRecord::Base
   attr_accessible :nome, :url_imagem, :lat, :lng, :servicos, :type, :municipio, :distrito, :descricao, :telefone, :website, :horario, :especialidades, :tipo_restaurante, :preco_medio, :lotacao, :tipo_musica, :ano_construcao, :servicos_cultura, :bandeira_azul
 
   MAX_REC = 5
+  W_DIST = 0.6
+  W_CHECKINS = 1 - W_DIST
 
   attr_accessor :info, :info2, :info3
 
@@ -17,7 +19,7 @@ class Local < ActiveRecord::Base
   		next if local.nome == self.nome # Não adicionar o próprio
   		d = distancia(self.lat, self.lng, local.lat, local.lng)
   		# Se ainda não tiver sugestões suficientes
-  		if pois.length < MAX_REC
+  		if pois.length < MAX_REC * 2
   			pois << [d, local]
   			pois.sort! { |a,b| a[0] <=> b[0] }
   		# Se há sugestões piores
@@ -28,8 +30,19 @@ class Local < ActiveRecord::Base
   		# Se não deve entrar para a lista das sugestões, não insere
   		end
   	end
+  	temp = []
+  	pois.each do |poi|
+  		dist = poi[0] * W_DIST
+  		begin
+  			checkins = (1.0/(poi[1].checkins.to_f+1.0)) * W_CHECKINS
+  		rescue
+  			checkins = 0
+  		end
+  		temp << [dist+checkins, poi[1]]
+  	end
+  	temp.sort! { |a,b| a[0] <=> b[0] }
   	sugestoes = []
-  	pois.each { |poi| sugestoes << poi[1] }
+  	temp[0..4].each { |poi| sugestoes << poi[1] }
   	return sugestoes
   end
   
