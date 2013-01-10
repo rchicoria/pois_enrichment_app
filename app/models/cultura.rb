@@ -1,0 +1,2 @@
+class Cultura < Local
+end

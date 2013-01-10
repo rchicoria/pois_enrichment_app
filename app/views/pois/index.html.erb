@@ -6,31 +6,50 @@
 	<% @i = (@i + 1) % 4 %>
 <% end %>
 
-<div class="container">
+<div class="container" id="c_poi" style="display: none">
+	<span id="pos_y" style="display: none"></span>
+	<a onclick="hide_poi(); return false;" style="cursor: pointer">Voltar à lista</a>
+	<div class="row">
+		<div class="span12">
+			<ul class="thumbnails">
+				<li class="thumbnail span12 thumb_poi">
+					<div class="row">
+						<div class="popup-title span12" style="padding: 10px"><h3></h3></div>
+					</div>
+					<div class="row">
+						<div class="popup-pic span3" style="padding: 10px"></div>
+						<div class="popup-text span8" style="padding: 10px"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="container" id="c_list">
 	<div class="row">
 		<% @pois_thumbs.each do |col| %>
 			<% if col != nil || col.length > 0 %>
 				<div class="span3">
-					<ul class="thumbnails">
+					<ul class="thumbnails grid">
 						<% col.each do |poi| %>
-							<li class="thumbnail">
-								<a href="#" <% if @category == "Praias" %>onclick="show_modal(<%= poi.id %>); return false;"<% end %>>
-									<% if @category == "Praias" and poi.url_imagem %>
-										<img src="<%= poi.url_imagem %>" alt="">
+							<li class="thumbnail span3">
+								<a href="#" onclick="show_poi(<%= poi.id %>); return false;">
+									<% if poi.url_imagem  %>
+										<% if poi.url_imagem.length > 0 %>
+											<img src="<%= poi.url_imagem %>" width="100%" style="max-height: 250px" alt="">
+										<% else %>
+											<%= image_tag "sem_fotografia.png" %>
+										<% end %>
 									<% else %>
-										<img src="http://placehold.it/260x180" alt="">
+										<%= image_tag "sem_fotografia.png" %>
 									<% end %>
 								</a>
 								<div class="caption">
-									<% if @category == "Praias" %>
-										<h4><%= poi.nome %></h4>
-										<p>Esta praia <%= "não " if not poi.bandeira_azul %>possui bandeira azul.</p>
-										<p>Distrito: <%= poi.distrito %></p>
-										<p>Município: <%= poi.municipio %></p>
-									<% else %>
-										<h4><%= poi.name %></h4>
-										<p>Este local pertence à categoria <%= poi.categories[0].name %></p>
-									<% end %>
+									<h4 onclick="show_poi(<%= poi.id %>); return false;" style="cursor: pointer">
+										<%= poi.nome %>
+									</h4>
+									<p><%= poi.descricao %></p>
 								</div>
 							</li>
 						<% end %>
@@ -39,98 +58,144 @@
 			<% end %>
 		<% end %>
 	</div>
-	<div class="modal hide" id="myModal" style="width: 95%; max-width: 530px; max-height: 80%">
-		<div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal">×</button>
-		    <h3></h3>
-		</div>
-		<div class="modal-tabs" style="background: #fafafa">
-			<ul class="nav nav-tabs">
-				<li id="tab-informacoes"><a style="cursor: pointer" onclick="select_informacoes(); return false;">Informações</a></li>
-				<li id="tab-localizacao"><a style="cursor: pointer" onclick="select_localizacao(); return false;">Localização</a></li>
-			</ul>
-		</div>
-		<div class="modal-body" style="overflow: hidden">
-			<div id="modal-informacoes"></div>
-			<div id="modal-localizacao"></div>
-		</div>
-		<div class="modal-footer">
-		    <a href="#" class="btn" data-dismiss="modal">Close</a>
-		    <a href="#" class="btn btn-primary">Save changes</a>
-		</div>
-	</div>
 
 	<script>
 		var map;
 		var lat = 0;
 		var lng = 0;
-
-		function select_informacoes() {
-			$('#modal-informacoes').show();
-			$('#modal-localizacao').hide();
-			$('#tab-informacoes').attr('class', 'active');
-			$('#tab-localizacao').attr('class', '');
+		
+		function distance( lat1, lng1, lat2, lng2 ) {
+		  	var R = 6371; // km
+			var dLat = (parseFloat(lat2)-parseFloat(lat1)) * Math.PI / 180;
+			var dLon = (parseFloat(lng2)-parseFloat(lng1)) * Math.PI / 180;
+			var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+				Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+				Math.sin(dLon/2) * Math.sin(dLon/2);
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+			var d = R * c;
+			if (d>1) return Math.round(d)+"km";
+			else if (d<=1) return Math.round(d*1000)+"m";
+			return d;
 		}
-
-		function select_localizacao() {
-			$('#modal-informacoes').hide();
-			$('#modal-localizacao').show();
-			$('#tab-informacoes').attr('class', '');
-			$('#tab-localizacao').attr('class', 'active');
-
-			google.maps.event.trigger(mapa, 'resize');
+		
+		function ver_autocarros(mostrar) {
 			map = new GMaps({
-				div: '#mapa',
-				lat: lat,
-				lng: lng
-			}).addMarker({
-				lat: lat,
-				lng: lng
-			});
+					div: '#mapa',
+					lat: lat,
+					lng: lng
+				});
+			map.addMarker({
+					lat: lat,
+					lng: lng
+				});
+			if (mostrar) {
+				map.drawOverlay({
+					lat: parseFloat($('#curr_lat').text()),
+					lng: parseFloat($('#curr_lng').text()),
+					content: '<div class="btn btn-primary overlay">34</div>'
+				});
+				$("#btn-mostra-autocarros").hide();
+				$("#btn-esconde-autocarros").show();
+			}
+			else {
+				$("#btn-esconde-autocarros").hide();
+				$("#btn-mostra-autocarros").show();
+			}
 		}
-
-		function show_modal(id) {
-			$('#myModal h3').text('');
-			$('#myModal h3').append('&nbsp;');
-			$('#modal-informacoes').text('');
-			$('#modal-informacoes').append('<p align="center" style="margin-top: 20px"><img src="http://www.animale.com.br/wp-content/themes/animale2013/images/loading.gif" width="20"></p>');
-			$('#modal-localizacao').text('');
-			select_informacoes();
-			$('#myModal').modal('show');
+		
+		function show_poi(id) {
+			$('#c_poi .popup-title h3').text('');
+			$('#c_poi .popup-pic').text('');
+			$('#c_poi .popup-text').text('');
+			$('#c_poi .popup-title h3').append('&nbsp;');
+			var pos_y = $(document).scrollTop();
+			$('#c_list').hide();
+			$('#c_poi').show();
+			
 			var jqxhr = $.getJSON("/pois/"+id+".json", function() {
 				var r = JSON.parse(jqxhr.responseText);
-				$('#myModal h3').text(r.local.nome);
-
-				// Informacoes
-				var informacoes = "";
-				if (r.local.url_imagem) informacoes += "<p><img src='"+r.local.url_imagem+"'></p>";
-				if (r.local.bandeira_azul) informacoes += "<p>Esta praia tem bandeira azul.</p>";
-				else informacoes += "<p>Esta praia não tem bandeira azul.</p>";
-				if (r.servicos.length > 0) {
-					informacoes += "<p>Serviços disponíveis:</p><ul>";
-					for (var i in r.servicos) {
-						informacoes += "<li>"+r.servicos[i].nome+"</li>";
-					}
-					informacoes += "</ul>"
-				}
-				$('#modal-informacoes').text('');
-				$('#modal-informacoes').append(informacoes);
-
-				// Localizacao
-				var localizacao = "";
-				localizacao += "<div id='mapa'></div>"
-				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+r.local.lat+"<br /><b>Longitude:</b> "+r.local.lng+"</p>";
-				$('#modal-localizacao').append(localizacao);
+				$('#c_poi .popup-title h3').text(r.local.nome);
+				
+				// Esquerda
+				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
+				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
+				if(r.local.website) $('#c_poi .popup-pic').append('<p><a target="_blank" href="'+r.local.website+'">Website</a></p>');
+				if(r.local.telefone) $('#c_poi .popup-pic').append('<p>'+r.local.telefone+'</p>');
+				if(r.local.descricao) $('#c_poi .popup-pic').append('<p>'+r.local.descricao+'</p>');
+				
+				// Direita
+				// Mapa
 				lat = r.local.lat;
 				lng = r.local.lng;
+				var localizacao = "";
+				localizacao += "<div id='mapa'></div>"
+				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+lat+"<br /><b>Longitude:</b> "+lng+"</p>";
+				if ($('#curr_lat').text().length > 0) localizacao += "<p>O utilizador encontra-se a aproximadamente "+distance($('#curr_lat').text(), $('#curr_lng').text(), lat, lng)+" deste local</p>";
+				localizacao += '<a id="btn-mostra-autocarros" class="btn" onclick="return ver_autocarros(true);">Ver autocarros perto</a>';
+				localizacao += '<a id="btn-esconde-autocarros" style="display: none" class="btn btn-primary" onclick="return ver_autocarros(false);">Esconder autocarros</a>';
+				localizacao += "<hr />";
+				$('#c_poi .popup-text').append(localizacao);
 				map = new GMaps({
 					div: '#mapa',
 					lat: lat,
 					lng: lng
 				});
 				$("#mapa").css("width", "100%").css("height", 250);
-			})
-			.error(function() { console.log(jqxhr); });
+				google.maps.event.trigger(mapa, 'resize');
+				map = new GMaps({
+					div: '#mapa',
+					lat: lat,
+					lng: lng
+				}).addMarker({
+					lat: lat,
+					lng: lng
+				});
+				
+				// Metadata
+				if(r.local.tipo_restaurante) $('#c_poi .popup-text').append('<p><b>Tipo de restaurante:</b> '+r.local.tipo_restaurante+'</p>');
+				if(r.local.tipo_musica) $('#c_poi .popup-text').append('<p><b>Tipo de música:</b> '+r.local.tipo_musica+'</p>');
+				if(r.local.especialidades) $('#c_poi .popup-text').append('<p><b>Especialidades:</b> '+r.local.especialidades+'</p>');
+				if(r.local.preco_medio) $('#c_poi .popup-text').append('<p><b>Preço médio:</b> '+r.local.preco_medio+'</p>');
+				if(r.local.lotacao) $('#c_poi .popup-text').append('<p><b>Lotação:</b> '+r.local.lotacao+'</p>');
+				if(r.local.ano_construcao) $('#c_poi .popup-text').append('<p><b>Data de construção:</b> '+r.local.ano_construcao+'</p>');
+				if(r.local.servicos_cultura) $('#c_poi .popup-text').append('<p><b>Serviços disponíveis:</b> '+r.local.servicos_cultura+'</p>');
+				if(r.local.horario) $('#c_poi .popup-text').append('<p><b>Horário de funcionamento:</b> '+r.local.horario+'</p>');
+				if (r.servicos.length > 0) {
+					var informacoes = "<p>Serviços disponíveis:</p><ul>";
+					for (var i in r.servicos) {
+						informacoes += "<li>"+r.servicos[i].nome+"</li>";
+					}
+					informacoes += "</ul>"
+					$('#c_poi .popup-text').append(informacoes);
+				}
+				
+				// Sugestões
+				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
+					var s = JSON.parse(jqxhr2.responseText);
+					if (s.length > 0) {
+						$('#c_poi .popup-text').append('<hr /><h3>A visitar por perto:</h3><ul>');
+						for (var i in s) {
+							var texto = "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
+							texto += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
+							$('#c_poi .popup-text').append(texto+"</li>");
+						}
+						$('#c_poi .popup-text').append("</ul>");
+					}
+				});
+			});
+			
+			$('#pos_y').text(pos_y);
+			$(document).scrollTop(0);
+		}
+		
+		function hide_poi() {
+		var pos_y = parseInt($('#pos_y').text());
+			$('#c_poi').hide();
+			$('#c_poi .popup-title h3').text('');
+			$('#c_poi .popup-pic').text('');
+			$('#c_poi .popup-text').text('');
+			$('#c_list').show();
+			$(document).scrollTop(pos_y);
 		}
 	</script>
 </div>

@@ -1,4 +1,4 @@
-API_URL = "https://www.ost.pt/rest/"
+API_URL = "https://api.ost.pt/"
 API_KEY = "key=jiwvircSWWiSmrYftHEBEyCxXOqAMyqHqjrQGsjW"
 
 # abstraction layer to map OST categories into OND? categories
@@ -15,3 +15,4 @@ def get_array_from_file(filename)
 end
 
 TICE_REJECT = get_array_from_file("tice_reject.txt")
+STOPWORDS_PT = get_array_from_file("stopwords_pt.txt")
