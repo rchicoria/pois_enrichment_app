@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Local < ActiveRecord::Base
   attr_accessible :nome, :url_imagem, :lat, :lng, :servicos
   MAX_REC = 5
@@ -28,6 +29,18 @@ class Local < ActiveRecord::Base
   	sugestoes = []
   	pois.each { |poi| sugestoes << poi[1] }
   	return sugestoes
+  end
+  
+  def texto_checkins
+  	begin
+	  	if self.checkins > 1
+	  		return "#{self.checkins} pessoas já estiveram aqui"
+	  	elsif self.checkins == 1
+	  		return "1 pessoa já esteve aqui"
+	  	end
+  	rescue
+  	end
+  	return "Ainda ninguém esteve aqui"
   end
   
   private

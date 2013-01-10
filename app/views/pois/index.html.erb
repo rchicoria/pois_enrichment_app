@@ -103,6 +103,15 @@
 			}
 		}
 		
+		function checkin(obj, id) {
+			obj.next().show();
+			obj.hide();
+			var jqxhr = $.getJSON("/checkin?id="+id, function() {
+				var r = JSON.parse(jqxhr.responseText);
+				$('#n_checkins').text(r);
+			});
+		}
+		
 		function show_poi(id) {
 			$('#c_poi .popup-title h3').text('');
 			$('#c_poi .popup-pic').text('');
@@ -119,9 +128,10 @@
 				// Esquerda
 				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
 				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
+				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p id="n_checkins">'+r.checkins+'</p><hr />');
 				if(r.local.website) $('#c_poi .popup-pic').append('<p><a target="_blank" href="'+r.local.website+'">Website</a></p>');
 				if(r.local.telefone) $('#c_poi .popup-pic').append('<p>'+r.local.telefone+'</p>');
-				if(r.local.descricao) $('#c_poi .popup-pic').append('<p>'+r.local.descricao+'</p>');
 				
 				// Direita
 				// Mapa
@@ -152,6 +162,7 @@
 				});
 				
 				// Metadata
+				if(r.local.descricao) $('#c_poi .popup-text').append('<p>'+r.local.descricao+'</p>');
 				if(r.local.tipo_restaurante) $('#c_poi .popup-text').append('<p><b>Tipo de restaurante:</b> '+r.local.tipo_restaurante+'</p>');
 				if(r.local.tipo_musica) $('#c_poi .popup-text').append('<p><b>Tipo de música:</b> '+r.local.tipo_musica+'</p>');
 				if(r.local.especialidades) $('#c_poi .popup-text').append('<p><b>Especialidades:</b> '+r.local.especialidades+'</p>');

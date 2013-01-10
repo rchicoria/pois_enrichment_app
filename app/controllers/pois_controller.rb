@@ -41,7 +41,7 @@ class PoisController < ApplicationController
 
 	def show
 		@local = Local.find(params[:id])
-		resposta = {:local => @local, :servicos => @local.servicos}
+		resposta = {:local => @local, :servicos => @local.servicos, :checkins => @local.texto_checkins}
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
@@ -66,6 +66,20 @@ class PoisController < ApplicationController
 		respond_to do |format|
 			format.xml { render :xml => @district.to_xml }
 			format.json { render :json => @district.to_json }
+		end
+	end
+	
+	def checkin
+		@local = Local.find(Integer(params[:id]))
+		begin
+			@local.checkins += 1
+		rescue
+			@local.checkins = 1
+		end
+		@local.save
+		respond_to do |format|
+			format.xml { render :xml => @local.texto_checkins.to_xml }
+			format.json { render :json => @local.texto_checkins.to_json }
 		end
 	end
 

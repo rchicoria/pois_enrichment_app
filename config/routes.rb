@@ -17,6 +17,7 @@ PoisEnrichmentApp::Application.routes.draw do
   match 'add_poi' => 'pois#add_poi'
   match 'suggestions' => 'pois#suggestions'
   match 'district' => 'pois#district'
+  match 'checkin' => 'pois#checkin'
 
   # Sample resource route with options:
   #   resources :products do
