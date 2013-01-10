@@ -33,7 +33,10 @@ class PoisController < ApplicationController
 				Local.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			end
 		end
-		@districts = District.all
+		@districts = []
+		District.all.each do |district|
+			@districts << district if Local.where('distrito = ' + district.id.to_s).size > 0
+		end
 	end
 
 	def show
