@@ -78,6 +78,31 @@
 			return d;
 		}
 		
+		function ver_autocarros(mostrar) {
+			map = new GMaps({
+					div: '#mapa',
+					lat: lat,
+					lng: lng
+				});
+			map.addMarker({
+					lat: lat,
+					lng: lng
+				});
+			if (mostrar) {
+				map.drawOverlay({
+					lat: parseFloat($('#curr_lat').text()),
+					lng: parseFloat($('#curr_lng').text()),
+					content: '<div class="btn btn-primary overlay">34</div>'
+				});
+				$("#btn-mostra-autocarros").hide();
+				$("#btn-esconde-autocarros").show();
+			}
+			else {
+				$("#btn-esconde-autocarros").hide();
+				$("#btn-mostra-autocarros").show();
+			}
+		}
+		
 		function show_poi(id) {
 			$('#c_poi .popup-title h3').text('');
 			$('#c_poi .popup-pic').text('');
@@ -106,6 +131,8 @@
 				localizacao += "<div id='mapa'></div>"
 				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+lat+"<br /><b>Longitude:</b> "+lng+"</p>";
 				if ($('#curr_lat').text().length > 0) localizacao += "<p>O utilizador encontra-se a aproximadamente "+distance($('#curr_lat').text(), $('#curr_lng').text(), lat, lng)+" deste local</p>";
+				localizacao += '<a id="btn-mostra-autocarros" class="btn" onclick="return ver_autocarros(true);">Ver autocarros perto</a>';
+				localizacao += '<a id="btn-esconde-autocarros" style="display: none" class="btn btn-primary" onclick="return ver_autocarros(false);">Esconder autocarros</a>';
 				localizacao += "<hr />";
 				$('#c_poi .popup-text').append(localizacao);
 				map = new GMaps({
