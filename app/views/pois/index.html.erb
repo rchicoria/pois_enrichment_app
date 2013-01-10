@@ -191,7 +191,7 @@
 						}
 						sugestoes += "</ul></div>";
 						if (s.mesma.length > 0) {
-							sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3>';
+							sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3><ul style="list-style: none">';
 							for (var j in s.mesma) {
 								sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.mesma[j].id+"); return false;'>"+s.mesma[j].nome+"</a></li>";
 							}
