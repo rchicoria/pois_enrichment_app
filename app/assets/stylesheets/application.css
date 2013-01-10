@@ -136,14 +136,20 @@ li.thumbnail {
 		padding: 0;
 		display: inline;
 	}
-	li.thumbnail {
+	ul.grid li.thumbnail {
 		max-width: 260px;
 		float: left;
 	}
 }
 
 @media (max-width: 480px) {
-	li.thumbnail {
+	ul.grid li.thumbnail {
 		max-width: 260px;
+	}
+}
+
+@media (max-width: 768px) {
+	.thumb_poi {
+		width: 95%;
 	}
 }

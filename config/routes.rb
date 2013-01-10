@@ -15,6 +15,8 @@ PoisEnrichmentApp::Application.routes.draw do
   resources :home
   root :to => 'home#index'
   match 'add_poi' => 'pois#add_poi'
+  match 'suggestions' => 'pois#suggestions'
+  match 'district' => 'pois#district'
 
   # Sample resource route with options:
   #   resources :products do

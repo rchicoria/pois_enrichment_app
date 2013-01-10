@@ -13,3 +13,6 @@ lda
 discoteca
 museum
 cervejaria
+ruins
+archaeological
+site
