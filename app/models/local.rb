@@ -13,13 +13,12 @@ class Local < ActiveRecord::Base
   has_many :servicos
   
   def pois_perto
-  	# Criar método que, com base nas suas coordenadas, devolva os POIs mais próximos
   	pois = []
   	Local.where('distrito = ?', self.distrito.to_s).each do |local|
   		next if local.nome == self.nome # Não adicionar o próprio
   		d = distancia(self.lat, self.lng, local.lat, local.lng)
   		# Se ainda não tiver sugestões suficientes
-  		if pois.length < MAX_REC * 2
+  		if pois.length < MAX_REC * 2 # O dobro porque selecciona mais e depois remove os piores
   			pois << [d, local]
   			pois.sort! { |a,b| a[0] <=> b[0] }
   		# Se há sugestões piores
@@ -30,6 +29,7 @@ class Local < ActiveRecord::Base
   		# Se não deve entrar para a lista das sugestões, não insere
   		end
   	end
+  	# Dentro dos melhores, seleccionar metade também com base nos checkins
   	temp = []
   	pois.each do |poi|
   		dist = poi[0] * W_DIST
@@ -42,7 +42,33 @@ class Local < ActiveRecord::Base
   	end
   	temp.sort! { |a,b| a[0] <=> b[0] }
   	sugestoes = []
-  	temp[0..4].each { |poi| sugestoes << poi[1] }
+  	temp[0..(MAX_REC-1)].each { |poi| sugestoes << poi[1] }
+  	return sugestoes
+  end
+  
+  def mesma_categoria
+  	pois = []
+  	Local.where('municipio = ? AND type = ?', self.municipio.to_s, self.type).each do |local|
+  		next if local.nome == self.nome # Não adicionar o próprio
+  		begin
+  			checkins = local.checkins.to_i
+  		rescue
+  			checkins = 0
+  		end
+  		# Se ainda não tiver sugestões suficientes
+  		if pois.length < MAX_REC
+  			pois << [checkins, local]
+  			pois.sort! { |a,b| b[0] <=> a[0] }
+  		# Se há sugestões piores
+  		elsif pois.last[0] < checkins
+  			pois << [checkins, local]
+  			pois.sort! { |a,b| b[0] <=> a[0] }
+  			pois.slice!(-1)
+  		# Se não deve entrar para a lista das sugestões, não insere
+  		end
+  	end
+  	sugestoes = []
+  	pois.each { |poi| sugestoes << poi[1] }
   	return sugestoes
   end
   

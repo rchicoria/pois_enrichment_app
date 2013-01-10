@@ -50,10 +50,23 @@ class PoisController < ApplicationController
 	end
 	
 	def suggestions
-		@suggestions = Local.find(Integer(params[:id])).pois_perto
+		@local = Local.find(Integer(params[:id]))
+		@perto = @local.pois_perto
+		@mesma = @local.mesma_categoria
+		categoria = @local.type
+		if categoria == "Cultura"
+			categoria = "Locais de #{categoria.downcase} recomendados"
+		elsif categoria == "Praia"
+			categoria = "#{categoria}s recomendadas"
+		elsif categoria == "Bar"
+			categoria = "#{categoria}es recomendados"
+		else
+			categoria = "#{categoria}s recomendados"
+		end
+		resposta = {:categoria => categoria, :perto => @perto, :mesma => @mesma}
 		respond_to do |format|
-			format.xml { render :xml => @suggestions.to_xml }
-			format.json { render :json => @suggestions.to_json }
+			format.xml { render :xml => resposta.to_xml }
+			format.json { render :json => resposta.to_json }
 		end
 	end
 	

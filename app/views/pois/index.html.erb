@@ -183,14 +183,20 @@
 				// Sugestões
 				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
 					var s = JSON.parse(jqxhr2.responseText);
-					if (s.length > 0) {
+					if (s.perto.length > 0) {
 						var sugestoes = '<hr /><div class="span4" style="margin-left: 0"><h3>A visitar por perto:</h3><ul style="list-style: none">';
-						for (var i in s) {
-							sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s[i].id+"); return false;'>"+s[i].nome+"</a>";
-							sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s[i].lat, s[i].lng, lat, lng)+"</span></li>";
+						for (var i in s.perto) {
+							sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.perto[i].id+"); return false;'>"+s.perto[i].nome+"</a>";
+							sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s.perto[i].lat, s.perto[i].lng, lat, lng)+"</span></li>";
 						}
 						sugestoes += "</ul></div>";
-						sugestoes += '<div class="span4"><h3>Sugestões personalizadas:</h3></div>';
+						if (s.mesma.length > 0) {
+							sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3>';
+							for (var j in s.mesma) {
+								sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.mesma[j].id+"); return false;'>"+s.mesma[j].nome+"</a></li>";
+							}
+							sugestoes += "</ul></div>";
+						}
 						$('#c_poi .popup-text').append(sugestoes);
 					}
 				});
