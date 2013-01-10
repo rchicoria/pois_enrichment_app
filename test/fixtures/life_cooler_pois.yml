@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  nome: MyString
+  url_imagem: MyString
+  categoria_lc: MyString
+  subcategoria_lc: MyString
+  municipio: MyString
+  distrito: MyString
+  descricao: MyText
+  telefone: MyString
+  website: MyString
+  horario: MyString
+  especialidades: MyText
+  tipo_restaurante: MyString
+  preco_medio: MyString
+  lotacao: MyString
+  tipo_musica: MyString
+  ano_construcao: MyString
+  servicos_cultura: MyString
+  bandeira_azul: false
+
+two:
+  nome: MyString
+  url_imagem: MyString
+  categoria_lc: MyString
+  subcategoria_lc: MyString
+  municipio: MyString
+  distrito: MyString
+  descricao: MyText
+  telefone: MyString
+  website: MyString
+  horario: MyString
+  especialidades: MyText
+  tipo_restaurante: MyString
+  preco_medio: MyString
+  lotacao: MyString
+  tipo_musica: MyString
+  ano_construcao: MyString
+  servicos_cultura: MyString
+  bandeira_azul: false

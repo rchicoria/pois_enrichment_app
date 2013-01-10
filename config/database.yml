@@ -13,9 +13,10 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: teste
-  username: rplopes
+  database: ond_app_data
+  username: ond_app_user
   password: pass
+  host: localhost
   pool: 5
 
 # Warning: The database defined as "test" will be erased and
