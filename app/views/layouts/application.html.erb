@@ -34,12 +34,10 @@
 				</li>
 				<li id="local" class="dropdown option hidden-phone">
 					<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-						<%= District.find(@district).name unless @district == 0 %>
-						<% if @district == 0 %>PORTUGAL<% end %>
+						<%= District.find(@district).name %>
 						<b class="caret"></b>
 					</a>
-					<ul class="dropdown-menu">
-						<li><a href="?district=0&category=<%= @category %>">PORTUGAL</a></li>
+					<ul id="dropdown-district" class="dropdown-menu" style="max-height: 300px; overflow-y: auto">
 						<% @districts.each do |district| %>
 							<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
 						<% end %>

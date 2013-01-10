@@ -3,7 +3,6 @@
 		<div class="span12" id="home-local">
 			<h2>Escolha o local</h2>
 			<ul class="nav nav-pills nav-stacked">
-				<li <% if @district == 0 %>class="active"<% end %>><a href="pois?district=0&category=<%= @category %>">PORTUGAL</a></li>
 				<% @districts.each do |district| %>
 					<li id="li-district-<%= district.id %>">
 						<a href="#" onclick="return goto_categoria(<%= district.id %>, '<%= district.name %>');"><%= district.name %></a>
