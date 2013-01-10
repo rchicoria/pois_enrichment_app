@@ -31,7 +31,6 @@ gem 'rgeo'
 gem 'rgeo-geojson'
 gem 'nokogiri'
 gem 'fuzzy-string-match'
-gem 'treat'
 gem 'scalpel'
 gem 'stanford-core-nlp'
 

@@ -60,6 +60,10 @@ namespace :db do
 					nodes = npage.css('#maincol div.col_int_esq span.rpl_nome a')
 
 					nodes.each do |node|
+						if PoiCoordinates.find_by_name(node.children.text)
+							puts "SKIP!" 
+							next
+						end
 						obj = {}
 						# identifica o link associado ao node (restaurante) e transforma a string de forma a ficar pronta para o scrapping
 						obj_url = URI.encode(URI.escape(MAIN_URL+(node.attributes["href"].value.scan(/\.\.\/\.\.\/(.+)/))[0][0]),'[]')
@@ -75,6 +79,10 @@ namespace :db do
 						poi_coordinates = PoiCoordinates.new
 						poi_coordinates.uri = obj_url.upcase
 						poi_coordinates.name = n_obj_page.css("h2.registo").text
+						if PoiCoordinates.find_by_name(poi_coordinates.name)
+							puts "SKIP!"
+							next
+						end
 						address = n_obj_page.css("div.info_contactos div span").first.to_s.scan(/<span>(.+)<br.*>.*<br/)[0][0] rescue ""
 						mun= n_obj_page.css("div.info_contactos div span").first.to_s.scan(/.+<br.*>(.+)<br/)[0][0] rescue ""
 						puts address

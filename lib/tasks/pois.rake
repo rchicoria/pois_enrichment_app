@@ -91,7 +91,7 @@ namespace :db do
 		end
 
 		# Remover os locais que estavam na base de dados
-		Local.delete_all
+		#Local.delete_all
 
 		# Para cada POI
 		@pois.each do |poi|
