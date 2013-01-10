@@ -34,12 +34,10 @@
 				</li>
 				<li id="local" class="dropdown option hidden-phone">
 					<a href="#" class="dropdown-toggle option" data-toggle="dropdown">
-						<%= District.find(@district).name unless @district == 0 %>
-						<% if @district == 0 %>PORTUGAL<% end %>
+						<%= District.find(@district).name %>
 						<b class="caret"></b>
 					</a>
-					<ul class="dropdown-menu">
-						<li><a href="?district=0&category=<%= @category %>">PORTUGAL</a></li>
+					<ul id="dropdown-district" class="dropdown-menu" style="max-height: 300px; overflow-y: auto">
 						<% @districts.each do |district| %>
 							<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
 						<% end %>
@@ -74,6 +72,19 @@
 	<script>
 		$('#search-container').hide();
 	</script>
+	
+	<div id="curr_lat" style="display: none"></div>
+	<div id="curr_lng" style="display: none"></div>
+	
+	<script>
+	function showPosition(position) {
+	  $("#curr_lat").text(position.coords.latitude);
+	  $("#curr_lng").text(position.coords.longitude);
+	  console.log(position.coords.latitude+" "+position.coords.longitude);
+	}
+	if (navigator.geolocation)
+	  navigator.geolocation.getCurrentPosition(showPosition);
+	</script>
 
 	<%= yield %>
 
@@ -85,6 +96,6 @@
 	<script src="https://developer.ost.pt/docs/front-end-style-guides/assets/js/bootstrap-dropdown.js"></script>
 
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-	<script src="https://raw.github.com/HPNeo/gmaps/master/gmaps.js"></script>
+	<%= javascript_include_tag "gmaps" %>
 </body>
 </html>

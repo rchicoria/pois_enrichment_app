@@ -33,7 +33,10 @@ class PoisController < ApplicationController
 				Local.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			end
 		end
-		@districts = District.all
+		@districts = []
+		District.all.each do |district|
+			@districts << district if Local.where('distrito = ' + district.id.to_s).size > 0
+		end
 	end
 
 	def show
@@ -51,6 +54,18 @@ class PoisController < ApplicationController
 		respond_to do |format|
 			format.xml { render :xml => @suggestions.to_xml }
 			format.json { render :json => @suggestions.to_json }
+		end
+	end
+	
+	def district
+		begin
+			@district = District.find_by(:range=>"1",:center=>params["lng"]+","+params["lat"])
+		rescue
+			@district = []
+		end
+		respond_to do |format|
+			format.xml { render :xml => @district.to_xml }
+			format.json { render :json => @district.to_json }
 		end
 	end
 

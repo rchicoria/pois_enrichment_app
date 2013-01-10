@@ -8,6 +8,9 @@ class HomeController < ApplicationController
 		@category = CATEGORY_DEFAULT
 		@district = Integer(params[:district]) if params[:district] && Integer(params[:district])
 		@category = params[:category] if params[:category]
-		@districts = District.all
+		@districts = []
+		District.all.each do |district|
+			@districts << district if Local.where('distrito = ' + district.to_s).size > 0
+		end
 	end
 end

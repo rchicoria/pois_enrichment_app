@@ -3,74 +3,91 @@
 		<div class="span12" id="home-local">
 			<h2>Escolha o local</h2>
 			<ul class="nav nav-pills nav-stacked">
-				<li <% if @district == 0 %>class="active"<% end %>><a href="pois?district=0&category=<%= @category %>">PORTUGAL</a></li>
 				<% @districts.each do |district| %>
-					<li <% if @district == district.id %>class="active"<% end %>>
-						<a href="#" onclick="return goto_categoria(<%= district.id %>);"><%= district.name %></a>
+					<li id="li-district-<%= district.id %>">
+						<a href="#" onclick="return goto_categoria(<%= district.id %>, '<%= district.name %>');"><%= district.name %></a>
 					</li>
 				<% end %>
 			</ul>
 		</div>
 		<div class="span12" id="home-categoria">
-			<h2>Escolha a categoria</h2>
-			<table class="category-chooser">
+			<h2>Locais de Coimbra</h2>
+			<table class="category-chooser" style="cursor: pointer">
 				<tr>
-					<td>
-						<a href="pois?category=0"><%= image_tag "0_top.png" %></a>
+					<td onclick="window.location.href='pois?category=Top&district='+$('#curr_district').text()">
+						<%= image_tag "0_top.png" %>
 						<p>Top</p>
 					</td>
-					<td>
-						<a href="pois?category=1"><%= image_tag "1_restaurantes.png" %></a>
+					<td onclick="window.location.href='pois?category=Restaurantes&district='+$('#curr_district').text()">
+						<%= image_tag "1_restaurantes.png" %>
 						<p>Restaurantes</p>
 					</td>
-					<td>
-						<a href="pois?category=2"><%= image_tag "2_bares.png" %></a>
+					<td onclick="window.location.href='pois?category=Bares&district='+$('#curr_district').text()">
+						<%= image_tag "2_bares.png" %>
 						<p>Bares</p>
 					</td>
 				</tr>
 				<tr>
-					<td>
-						<a href="pois?category=3"><%= image_tag "3_monumentos.png" %></a>
+					<td onclick="window.location.href='pois?category=Monumentos&district='+$('#curr_district').text()">
+						<%= image_tag "3_monumentos.png" %>
 						<p>Monumentos</p>
 					</td>
-					<td>
-						<a href="pois?category=4"><%= image_tag "4_parques.png" %></a>
-						<p>Parques</p>
-					</td>
-					<td>
-						<a href="pois?category=5"><%= image_tag "5_cultura.png" %></a>
+					<td onclick="window.location.href='pois?category=Cultura&district='+$('#curr_district').text()">
+						<%= image_tag "5_cultura.png" %>
 						<p>Cultura</p>
 					</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="pois?category=6"><%= image_tag "6_praias.png" %></a>
+					<td onclick="window.location.href='pois?category=Praias&district='+$('#curr_district').text()">
+						<%= image_tag "6_praias.png" %>
 						<p>Praias</p>
-					</td>
-					<td>
-						<a href="pois?category=7"><%= image_tag "7_lazer.png" %></a>
-						<p>Lazer</p>
-					</td>
-					<td>
-						<a href="pois?category=8"><%= image_tag "8_todos.png" %></a>
-						<p>Todos...</p>
 					</td>
 				</tr>
 			</table>
+			<p style="padding-top: 20px; text-align: center">
+				<a class="btn btn-primary" href="#" onclick="return goto_local();">Ver locais de outro distrito</a>
+			<p>
 		</div>
 	</div>
 </div>
 
+<span id="curr_district" style="display: none"></span>
+
 <script>
+	$('#home-local').hide();
 	$('#home-categoria').hide();
-	function goto_categoria(id_cidade) {
-		$('#home-categoria a').each(function() {
+	
+	function goto_categoria(id, nome) {
+		/*$('#home-categoria a').each(function() {
 			var new_url = this.href + '&district=' + id_cidade;
 			this.href = new_url;
+		});*/
+		$("#home-categoria h2").each(function() {
+			$(this).text("Locais de "+nome);
 		});
+		$("#curr_district").text(id);
 		$('#home-local').hide();
 		$('#home-categoria').show();
-		local = id_cidade;
 		return true;
 	}
+	function goto_local() {
+		$('#home-categoria').hide();
+		$('#home-local').show();
+		return true;
+	}
+	
+	function showPosition(position) {
+	  $("#curr_lat").text(position.coords.latitude);
+	  $("#curr_lng").text(position.coords.longitude);
+	  console.log(lat+" "+lng);
+	  var jqxhr = $.getJSON("/district?lat="+position.coords.latitude+"&lng="+position.coords.longitude, function() {
+		var resp = JSON.parse(jqxhr.responseText);
+		if (resp.length > 0) {
+			$("#li-district-"+resp[0].id).attr("class", "active");
+			$("#curr_district").text(resp[0].id);
+			goto_categoria(resp[0].id, resp[0].name);
+		}
+		else goto_local();
+	});
+	}
+	if (navigator.geolocation)
+	  navigator.geolocation.getCurrentPosition(showPosition);
 </script>
