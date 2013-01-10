@@ -56,6 +56,7 @@ namespace :db do
 			rescue
 				next
 			end
+			obj.name = normalize_name(obj.name) rescue next
 		end
 
 		puts "Now running matches..."
