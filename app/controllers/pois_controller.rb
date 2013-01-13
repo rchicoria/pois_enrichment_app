@@ -22,20 +22,12 @@ class PoisController < ApplicationController
 			puts @district
 			search = Sunspot.search(LifeCoolerPoi,Local) do
 				fulltext params[:s]
-				#with(:distrito, @district)
 			end
 			@pois = search.results
 			seen = []
 			seen_pois = []
 			@pois.each do |p|
-				puts District.find(@district).name
-				puts p
-				if seen.include? p.nome or District.find(@district).name != p.distrito and p.distrito.class.to_s == "String"
-					puts "Descartado "
-					puts p
-				else
-					puts "Aceite "
-					puts p
+				if !seen.include? p.nome
 					seen << p.nome
 					seen_pois << p
 				end
@@ -66,7 +58,7 @@ class PoisController < ApplicationController
 
 	def show
 		@local = Local.find(params[:id])
-		resposta = {:local => @local, :servicos => @local.servicos, :checkins => @local.texto_checkins}
+		resposta = {:local => @local, :servicos => @local.servicos, :checkins => @local.texto_checkins, :type => @local.type}
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
@@ -76,7 +68,13 @@ class PoisController < ApplicationController
 
 	def pois_lc
 		@local = LifeCoolerPoi.find(params[:id])
-		resposta = {:local => @local}
+		temp = Local.find_by_nome(@local.nome)
+		puts temp
+		if temp
+			resposta = {:local => temp, :internal => true, :checkins => temp.texto_checkins, :type => temp.type}
+		else
+			resposta = {:local => @local, :internal => false}
+		end
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
@@ -133,23 +131,15 @@ class PoisController < ApplicationController
 	
 	def checkin_lc
 
-		puts "ENTREI ========================"
-
 		@lifecooler = LifeCoolerPoi.find(Integer(params[:id]))
 		lat = params[:lat]
 		lng = params[:lng]
-		puts "Antes da condição"
 		if @lifecooler.categoria_lc == "Restaurantes"
 			@local = Restaurante.new
-			puts "criou restaurante"
 			@local.especialidades = @lifecooler.especialidades
-			puts "especialidades"
 			@local.tipo_restaurante = @lifecooler.tipo_restaurante
-			puts "tipo"
 			@local.preco_medio = @lifecooler.preco_medio
-			puts "preco"
 			@local.lotacao = @lifecooler.lotacao
-			puts "lotacao"
 		else
 			string = ""
 			nome = remove_stopwords(@lifecooler.nome)
@@ -170,15 +160,14 @@ class PoisController < ApplicationController
 				@local.ano_construcao = @lifecooler.ano_construcao
 			elsif categoria == "Cultura"
 				@local = Cultura.new
-				@local = @lifecooler.servicos_cultura
+				@local.servicos_cultura = @lifecooler.servicos_cultura
 			end
 		end
-
-		puts "cenas"
 
 		@local = copy_generic_poi @lifecooler, @local
 		@local.lat = lat
 		@local.lng = lng
+		@local.checkins = 1
 		
 		@local.save
 		respond_to do |format|
@@ -418,7 +407,8 @@ class PoisController < ApplicationController
 		local.url_imagem = lifecooler.url_imagem
 		local.website = lifecooler.website
 		local.telefone = lifecooler.telefone
-		local.distrito = 35
+		local.distrito = District.find_by(:name=>lifecooler.distrito).first.id
+		local.municipio = Municipality.find_by(:name=>lifecooler.municipio).first.id
 		local
 	end
 end

@@ -119,12 +119,15 @@
 			var lng = parseFloat($('#curr_lng').text());
 			var jqxhr = $.getJSON("/checkin_lc?id="+id+"&lat="+lat+"&lng="+lng, function() {
 				var r = JSON.parse(jqxhr.responseText);
-				$('#n_checkins').text(r);
+				show_poi(id, false, true);
+
+				//$('#n_checkins').text(r);
 			});
 		}
 		
-		function show_poi(id, internal) {
+		function show_poi(id, internal, is_here) {
 			if(typeof(internal)==='undefined') internal = true;
+			if(typeof(is_here)==='undefined') is_here = false;
 			console.log(internal);
 			$('#c_poi .popup-title h3').text('');
 			$('#c_poi .popup-pic').text('');
@@ -138,15 +141,20 @@
 			if (!internal) query = "/pois_lc?id="+id
 			var jqxhr = $.getJSON(query, function() {
 				var r = JSON.parse(jqxhr.responseText);
-				var nome = r.local.nome
-				if (!nome) nome = r.local.nome_lc
-				$('#c_poi .popup-title h3').text(nome);
+				if(!internal) internal = r.internal;
+				var nome = r.local.nome;
+				if (!nome) nome = r.local.nome_lc;
+				$('#c_poi .popup-title h3').append(nome);
 				
 				// Esquerda
+				if (internal) $('#c_poi .popup-pic').append("<p><span class=\"label label-success\">"+r.type+"</span></p>");
 				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
 				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
 				if (internal && $('#curr_lat').text().length > 0) {
-					$('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+					if(is_here==false)
+						$('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+					else
+						$('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
 					$('#c_poi .popup-pic').append('<p id="n_checkins">'+r.checkins+'</p><hr />');
 				}
 				else if ($('#curr_lat').text().length > 0) {

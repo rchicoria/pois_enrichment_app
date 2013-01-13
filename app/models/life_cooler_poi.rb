@@ -44,4 +44,8 @@ class LifeCoolerPoi < ActiveRecord::Base
     distrito_lc
   end
 
+  def municipio
+    municipio_lc
+  end
+
 end

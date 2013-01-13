@@ -50,10 +50,11 @@ class District < AppModel
       json_hash = result["Objects"]
       total_objects = result["Meta"]["total_objects"].to_i
       json_hash.each do |x|
-        objects << District.new(x)
+        objects << District.new(x) if !params[:name] or params[:name] == x["name"]
       end
       count += 25
     end while count < total_objects
+
     objects
   end
 

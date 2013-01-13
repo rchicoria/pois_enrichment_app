@@ -3,7 +3,7 @@ class HomeController < ApplicationController
 	CATEGORY_DEFAULT = "Top"
 
 	def index
-		redirect_to pois_url unless mobile_agent?
+		#redirect_to pois_url unless mobile_agent?
 		@district = DISTRICT_DEFAULT
 		@category = CATEGORY_DEFAULT
 		@district = Integer(params[:district]) if params[:district] && Integer(params[:district])
