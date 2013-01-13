@@ -12,6 +12,7 @@ class Local < ActiveRecord::Base
     text :tipo_restaurante, :boost => 2.0
     integer :distrito
     integer :municipio
+    #latlon(:location) { Sunspot::Util::Coordinates.new(40.2, -8.1) }
   end
 
   attr_accessible :nome, :url_imagem, :lat, :lng, :servicos, :type, :municipio, :distrito, :descricao, :telefone, :website, :horario, :especialidades, :tipo_restaurante, :preco_medio, :lotacao, :tipo_musica, :ano_construcao, :servicos_cultura, :bandeira_azul

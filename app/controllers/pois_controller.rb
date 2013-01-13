@@ -21,7 +21,10 @@ class PoisController < ApplicationController
 		if params[:s]
 			puts @district
 			search = Sunspot.search(LifeCoolerPoi,Local) do
-				fulltext params[:s]
+				fulltext params[:s] #do
+					#boost(2.0) { with(:location).in_radius(params[:lat].to_f, param[:lon].to_f, 4, :bbox => true) }
+					#boost(4.0) { with(:location).in_radius(params[:lat].to_f, param[:lon].to_f, 2, :bbox => true) }
+				#end
 			end
 			@pois = search.results
 			seen = []
@@ -49,6 +52,12 @@ class PoisController < ApplicationController
 			else
 				Local.where('distrito = ' + @district.to_s).each { |local| @pois << local }
 			end
+			@pois.sort! do |a,b|
+				esquerda = a.checkins ? a.checkins : 0
+				direita = b.checkins ? b.checkins : 0 
+				direita <=> esquerda
+			end
+			@pois = @pois[0..15] if @category == "Top"
 		end
 		@districts = []
 		District.all.each do |district|

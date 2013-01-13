@@ -49,7 +49,7 @@
 									<h4 onclick="show_poi(<%= poi.id %><% begin poi.categoria_lc %>,false<% rescue; end %>); return false;" style="cursor: pointer">
 										<%= poi.nome %>
 									</h4>
-									<p><%= poi.descricao %></p>
+									<p><%= raw truncate(poi.descricao,:length=>300,:omission => "...") %></p>
 								</div>
 							</li>
 						<% end %>
