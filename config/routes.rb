@@ -18,6 +18,8 @@ PoisEnrichmentApp::Application.routes.draw do
   match 'suggestions' => 'pois#suggestions'
   match 'district' => 'pois#district'
   match 'checkin' => 'pois#checkin'
+  match 'checkin_lc' => 'pois#checkin_lc'
+  match 'pois_lc' => 'pois#pois_lc'
 
   # Sample resource route with options:
   #   resources :products do

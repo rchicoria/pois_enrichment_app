@@ -34,7 +34,7 @@
 					<ul class="thumbnails grid">
 						<% col.each do |poi| %>
 							<li class="thumbnail span3">
-								<a href="#" onclick="show_poi(<%= poi.id %>); return false;">
+								<a href="#" onclick="show_poi(<%= poi.id %><% begin poi.categoria_lc %>,false<% rescue; end %>); return false;">
 									<% if poi.url_imagem  %>
 										<% if poi.url_imagem.length > 0 %>
 											<img src="<%= poi.url_imagem %>" width="100%" style="max-height: 250px" alt="">
@@ -46,7 +46,7 @@
 									<% end %>
 								</a>
 								<div class="caption">
-									<h4 onclick="show_poi(<%= poi.id %>); return false;" style="cursor: pointer">
+									<h4 onclick="show_poi(<%= poi.id %><% begin poi.categoria_lc %>,false<% rescue; end %>); return false;" style="cursor: pointer">
 										<%= poi.nome %>
 									</h4>
 									<p><%= poi.descricao %></p>
@@ -112,7 +112,20 @@
 			});
 		}
 		
-		function show_poi(id) {
+		function checkin_lc(obj, id) {
+			obj.next().show();
+			obj.hide();
+			var lat = parseFloat($('#curr_lat').text());
+			var lng = parseFloat($('#curr_lng').text());
+			var jqxhr = $.getJSON("/checkin_lc?id="+id+"&lat="+lat+"&lng="+lng, function() {
+				var r = JSON.parse(jqxhr.responseText);
+				$('#n_checkins').text(r);
+			});
+		}
+		
+		function show_poi(id, internal) {
+			if(typeof(internal)==='undefined') internal = true;
+			console.log(internal);
 			$('#c_poi .popup-title h3').text('');
 			$('#c_poi .popup-pic').text('');
 			$('#c_poi .popup-text').text('');
@@ -121,85 +134,111 @@
 			$('#c_list').hide();
 			$('#c_poi').show();
 			
-			var jqxhr = $.getJSON("/pois/"+id+".json", function() {
+			var query = "/pois/"+id+".json";
+			if (!internal) query = "/pois_lc?id="+id
+			var jqxhr = $.getJSON(query, function() {
 				var r = JSON.parse(jqxhr.responseText);
-				$('#c_poi .popup-title h3').text(r.local.nome);
+				var nome = r.local.nome
+				if (!nome) nome = r.local.nome_lc
+				$('#c_poi .popup-title h3').text(nome);
 				
 				// Esquerda
 				if (r.local.url_imagem) $('#c_poi .popup-pic').append("<p><img src='"+r.local.url_imagem+"' width='95%' /></p>");
 				else $('#c_poi .popup-pic').append("<p><img src='/assets/sem_fotografia.png' width='95%' /></p>");
-				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
-				if ($('#curr_lat').text().length > 0) $('#c_poi .popup-pic').append('<p id="n_checkins">'+r.checkins+'</p><hr />');
+				if (internal && $('#curr_lat').text().length > 0) {
+					$('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+					$('#c_poi .popup-pic').append('<p id="n_checkins">'+r.checkins+'</p><hr />');
+				}
+				else if ($('#curr_lat').text().length > 0) {
+					$('#c_poi .popup-pic').append('<p style="padding: 10px 0 10px 0; text-align: center"><a class="btn btn-large" onclick="return checkin_lc($(this), '+r.local.id+');"><i class="icon-map-marker"></i> Estou aqui</a><a style="display: none" class="btn btn-large btn-success disabled"><i class="icon-ok"></i> Estou aqui</a></p>');
+					$('#c_poi .popup-pic').append('<p id="n_checkins">Ainda ninguém esteve aqui</p><hr />');
+				}
 				if(r.local.website) $('#c_poi .popup-pic').append('<p><a target="_blank" href="'+r.local.website+'">Website</a></p>');
 				if(r.local.telefone) $('#c_poi .popup-pic').append('<p>'+r.local.telefone+'</p>');
 				
 				// Direita
 				// Mapa
-				lat = r.local.lat;
-				lng = r.local.lng;
-				var localizacao = "";
-				localizacao += "<div id='mapa'></div>"
-				localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+lat+"<br /><b>Longitude:</b> "+lng+"</p>";
-				if ($('#curr_lat').text().length > 0) localizacao += "<p>O utilizador encontra-se a aproximadamente "+distance($('#curr_lat').text(), $('#curr_lng').text(), lat, lng)+" deste local</p>";
-				localizacao += '<a id="btn-mostra-autocarros" class="btn" onclick="return ver_autocarros(true);">Ver autocarros perto</a>';
-				localizacao += '<a id="btn-esconde-autocarros" style="display: none" class="btn btn-primary" onclick="return ver_autocarros(false);">Esconder autocarros</a>';
-				localizacao += "<hr />";
-				$('#c_poi .popup-text').append(localizacao);
-				map = new GMaps({
-					div: '#mapa',
-					lat: lat,
-					lng: lng
-				});
-				$("#mapa").css("width", "100%").css("height", 250);
-				google.maps.event.trigger(mapa, 'resize');
-				map = new GMaps({
-					div: '#mapa',
-					lat: lat,
-					lng: lng
-				}).addMarker({
-					lat: lat,
-					lng: lng
-				});
+				if (internal) {
+					lat = r.local.lat;
+					lng = r.local.lng;
+					var localizacao = "";
+					localizacao += "<div id='mapa'></div>"
+					localizacao += "<p>Marque no seu GPS:</p><p><b>Latitude:</b> "+lat+"<br /><b>Longitude:</b> "+lng+"</p>";
+					if ($('#curr_lat').text().length > 0) localizacao += "<p>O utilizador encontra-se a aproximadamente "+distance($('#curr_lat').text(), $('#curr_lng').text(), lat, lng)+" deste local</p>";
+					//localizacao += '<a id="btn-mostra-autocarros" class="btn" onclick="return ver_autocarros(true);">Ver autocarros perto</a>';
+					//localizacao += '<a id="btn-esconde-autocarros" style="display: none" class="btn btn-primary" onclick="return ver_autocarros(false);">Esconder autocarros</a>';
+					localizacao += "<hr />";
+					$('#c_poi .popup-text').append(localizacao);
+					map = new GMaps({
+						div: '#mapa',
+						lat: lat,
+						lng: lng
+					});
+					$("#mapa").css("width", "100%").css("height", 250);
+					google.maps.event.trigger(mapa, 'resize');
+					map = new GMaps({
+						div: '#mapa',
+						lat: lat,
+						lng: lng
+					}).addMarker({
+						lat: lat,
+						lng: lng
+					});
+				}
 				
 				// Metadata
-				if(r.local.descricao) $('#c_poi .popup-text').append('<p>'+r.local.descricao+'</p>');
-				if(r.local.tipo_restaurante) $('#c_poi .popup-text').append('<p><b>Tipo de restaurante:</b> '+r.local.tipo_restaurante+'</p>');
-				if(r.local.tipo_musica) $('#c_poi .popup-text').append('<p><b>Tipo de música:</b> '+r.local.tipo_musica+'</p>');
-				if(r.local.especialidades) $('#c_poi .popup-text').append('<p><b>Especialidades:</b> '+r.local.especialidades+'</p>');
+				var descricao = r.local.descricao
+				if (!descricao) descricao = r.local.descricao_lc
+				var tipo_restaurante = r.local.tipo_restaurante
+				if (!tipo_restaurante) tipo_restaurante = r.local.tipo_restaurante_lc
+				var tipo_musica = r.local.tipo_musica
+				if (!tipo_musica) tipo_musica = r.local.tipo_musica_lc
+				var especialidades = r.local.especialidades
+				if (!especialidades) especialidades = r.local.especialidades_lc
+				var servicos_cultura = r.local.servicos_cultura
+				if (!servicos_cultura) servicos_cultura = r.local.servicos_cultura_lc
+				if(descricao) $('#c_poi .popup-text').append('<p>'+descricao+'</p>');
+				if(tipo_restaurante) $('#c_poi .popup-text').append('<p><b>Tipo de restaurante:</b> '+tipo_restaurante+'</p>');
+				if(tipo_musica) $('#c_poi .popup-text').append('<p><b>Tipo de música:</b> '+tipo_musica+'</p>');
+				if(especialidades) $('#c_poi .popup-text').append('<p><b>Especialidades:</b> '+especialidades+'</p>');
 				if(r.local.preco_medio) $('#c_poi .popup-text').append('<p><b>Preço médio:</b> '+r.local.preco_medio+'</p>');
 				if(r.local.lotacao) $('#c_poi .popup-text').append('<p><b>Lotação:</b> '+r.local.lotacao+'</p>');
 				if(r.local.ano_construcao) $('#c_poi .popup-text').append('<p><b>Data de construção:</b> '+r.local.ano_construcao+'</p>');
-				if(r.local.servicos_cultura) $('#c_poi .popup-text').append('<p><b>Serviços disponíveis:</b> '+r.local.servicos_cultura+'</p>');
+				if(servicos_cultura) $('#c_poi .popup-text').append('<p><b>Serviços disponíveis:</b> '+servicos_cultura+'</p>');
 				if(r.local.horario) $('#c_poi .popup-text').append('<p><b>Horário de funcionamento:</b> '+r.local.horario+'</p>');
-				if (r.servicos.length > 0) {
-					var informacoes = "<p>Serviços disponíveis:</p><ul>";
-					for (var i in r.servicos) {
-						informacoes += "<li>"+r.servicos[i].nome+"</li>";
+				if (internal) {
+					if (r.servicos.length > 0) {
+						var informacoes = "<p>Serviços disponíveis:</p><ul>";
+						for (var i in r.servicos) {
+							informacoes += "<li>"+r.servicos[i].nome+"</li>";
+						}
+						informacoes += "</ul>"
+						$('#c_poi .popup-text').append(informacoes);
 					}
-					informacoes += "</ul>"
-					$('#c_poi .popup-text').append(informacoes);
 				}
 				
 				// Sugestões
-				var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
-					var s = JSON.parse(jqxhr2.responseText);
-					if (s.perto.length > 0) {
-						var sugestoes = '<hr /><div class="span4" style="margin-left: 0"><h3>A visitar por perto:</h3><ul style="list-style: none">';
-						for (var i in s.perto) {
-							sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.perto[i].id+"); return false;'>"+s.perto[i].nome+"</a>";
-							sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s.perto[i].lat, s.perto[i].lng, lat, lng)+"</span></li>";
-						}
-						sugestoes += "</ul></div>";
-						if (s.mesma.length > 0) {
-							sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3><ul style="list-style: none">';
-							for (var j in s.mesma) {
-								sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.mesma[j].id+"); return false;'>"+s.mesma[j].nome+"</a></li>";
+				if (internal) {
+					var jqxhr2 = $.getJSON("/suggestions?id="+id, function() {
+						var s = JSON.parse(jqxhr2.responseText);
+						if (s.perto.length > 0) {
+							var sugestoes = '<hr /><div class="span4" style="margin-left: 0"><h3>A visitar por perto:</h3><ul style="list-style: none">';
+							for (var i in s.perto) {
+								sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.perto[i].id+"); return false;'>"+s.perto[i].nome+"</a>";
+								sugestoes += "<span style='font-size: 90%; color: #444'> a "+distance(s.perto[i].lat, s.perto[i].lng, lat, lng)+"</span></li>";
 							}
 							sugestoes += "</ul></div>";
+							if (s.mesma.length > 0) {
+								sugestoes += '<div class="span4"><h3>'+s.categoria+':</h3><ul style="list-style: none">';
+								for (var j in s.mesma) {
+									sugestoes += "<li><a style='cursor: pointer' onclick='show_poi("+s.mesma[j].id+"); return false;'>"+s.mesma[j].nome+"</a></li>";
+								}
+								sugestoes += "</ul></div>";
+							}
+							$('#c_poi .popup-text').append(sugestoes);
 						}
-						$('#c_poi .popup-text').append(sugestoes);
-					}
-				});
+					});
+				}
 			});
 			
 			$('#pos_y').text(pos_y);

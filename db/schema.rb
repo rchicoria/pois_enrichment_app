@@ -11,7 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130110191556) do
+ActiveRecord::Schema.define(:version => 20130111053539) do
+
   create_table "categoria", :force => true do |t|
     t.string   "nome"
     t.datetime "created_at", :null => false
@@ -20,26 +21,26 @@ ActiveRecord::Schema.define(:version => 20130110191556) do
   end
 
   create_table "life_cooler_pois", :force => true do |t|
-    t.string   "nome"
+    t.string   "nome_lc"
     t.string   "url_imagem"
     t.string   "categoria_lc"
     t.string   "subcategoria_lc"
-    t.string   "municipio"
-    t.string   "distrito"
-    t.text     "descricao"
+    t.string   "municipio_lc"
+    t.string   "distrito_lc"
+    t.text     "descricao_lc"
     t.string   "telefone"
     t.string   "website"
     t.string   "horario"
-    t.text     "especialidades"
-    t.string   "tipo_restaurante"
+    t.text     "especialidades_lc"
+    t.string   "tipo_restaurante_lc"
     t.string   "preco_medio"
     t.string   "lotacao"
-    t.string   "tipo_musica"
+    t.string   "tipo_musica_lc"
     t.string   "ano_construcao"
-    t.string   "servicos_cultura"
+    t.string   "servicos_cultura_lc"
     t.boolean  "bandeira_azul"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.string   "street"
     t.string   "url"
   end

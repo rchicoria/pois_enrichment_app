@@ -1,6 +1,19 @@
 # encoding: UTF-8
 class Local < ActiveRecord::Base
 
+  set_table_name "locais"
+
+  searchable do
+    text :nome, :boost => 10.0
+    text :descricao, :boost => 2.0
+    text :especialidades, :boost => 2.0
+    text :servicos_cultura, :boost => 2.0
+    text :tipo_musica, :boost => 2.0
+    text :tipo_restaurante, :boost => 2.0
+    integer :distrito
+    integer :municipio
+  end
+
   attr_accessible :nome, :url_imagem, :lat, :lng, :servicos, :type, :municipio, :distrito, :descricao, :telefone, :website, :horario, :especialidades, :tipo_restaurante, :preco_medio, :lotacao, :tipo_musica, :ano_construcao, :servicos_cultura, :bandeira_azul
 
   MAX_REC = 5
@@ -9,7 +22,6 @@ class Local < ActiveRecord::Base
 
   attr_accessor :info, :info2, :info3
 
-  set_table_name "locais"
   has_many :servicos
   
   def pois_perto

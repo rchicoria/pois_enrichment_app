@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'open-uri'
 require 'fuzzystringmatch'
 
@@ -17,7 +19,30 @@ class PoisController < ApplicationController
 		@category = params[:category] if params[:category]
 		@pois = []
 		if params[:s]
-			@pois = Poi.find_by(:name=>params[:s])
+			puts @district
+			search = Sunspot.search(LifeCoolerPoi,Local) do
+				fulltext params[:s]
+				#with(:distrito, @district)
+			end
+			@pois = search.results
+			seen = []
+			seen_pois = []
+			@pois.each do |p|
+				puts District.find(@district).name
+				puts p
+				if seen.include? p.nome or District.find(@district).name != p.distrito and p.distrito.class.to_s == "String"
+					puts "Descartado "
+					puts p
+				else
+					puts "Aceite "
+					puts p
+					seen << p.nome
+					seen_pois << p
+				end
+			end
+
+			@pois = seen_pois
+
 		else
 			if @category == "Restaurantes"
 				Restaurante.where('distrito = ' + @district.to_s).each { |local| @pois << local }
@@ -42,6 +67,16 @@ class PoisController < ApplicationController
 	def show
 		@local = Local.find(params[:id])
 		resposta = {:local => @local, :servicos => @local.servicos, :checkins => @local.texto_checkins}
+		@districts = District.all
+		respond_to do |format|
+			format.xml { render :xml => resposta.to_xml }
+			format.json { render :json => resposta.to_json }
+		end
+	end
+
+	def pois_lc
+		@local = LifeCoolerPoi.find(params[:id])
+		resposta = {:local => @local}
 		@districts = District.all
 		respond_to do |format|
 			format.xml { render :xml => resposta.to_xml }
@@ -93,6 +128,62 @@ class PoisController < ApplicationController
 		respond_to do |format|
 			format.xml { render :xml => @local.texto_checkins.to_xml }
 			format.json { render :json => @local.texto_checkins.to_json }
+		end
+	end
+	
+	def checkin_lc
+
+		puts "ENTREI ========================"
+
+		@lifecooler = LifeCoolerPoi.find(Integer(params[:id]))
+		lat = params[:lat]
+		lng = params[:lng]
+		puts "Antes da condição"
+		if @lifecooler.categoria_lc == "Restaurantes"
+			@local = Restaurante.new
+			puts "criou restaurante"
+			@local.especialidades = @lifecooler.especialidades
+			puts "especialidades"
+			@local.tipo_restaurante = @lifecooler.tipo_restaurante
+			puts "tipo"
+			@local.preco_medio = @lifecooler.preco_medio
+			puts "preco"
+			@local.lotacao = @lifecooler.lotacao
+			puts "lotacao"
+		else
+			string = ""
+			nome = remove_stopwords(@lifecooler.nome)
+			string += nome
+			descricao = remove_stopwords(@lifecooler.descricao)
+			string += descricao
+			tipo_musica = remove_stopwords(@lifecooler.tipo_musica)
+			string += tipo_musica
+			servicos_cultura = remove_stopwords(@lifecooler.servicos_cultura)
+			string += servicos_cultura
+			categoria = categoria = CLASSIFICADOR.system.classify string
+			if categoria == "Bar"
+				@local = Bar.new
+				@local.tipo_musica = @lifecooler.tipo_musica
+				@local.lotacao = @lifecooler.lotacao
+			elsif categoria == "Monumento"
+				@local = Monumento.new
+				@local.ano_construcao = @lifecooler.ano_construcao
+			elsif categoria == "Cultura"
+				@local = Cultura.new
+				@local = @lifecooler.servicos_cultura
+			end
+		end
+
+		puts "cenas"
+
+		@local = copy_generic_poi @lifecooler, @local
+		@local.lat = lat
+		@local.lng = lng
+		
+		@local.save
+		respond_to do |format|
+			format.xml { render :xml => @local.to_xml }
+			format.json { render :json => @local.to_json }
 		end
 	end
 
@@ -288,6 +379,17 @@ class PoisController < ApplicationController
 
 	private 
 
+	def remove_stopwords string
+		words = string.apply(:chunk, :segment, :tokenize).words
+		new_array = []
+		words.each do |w|
+			if !STOPWORDS_PT.include? w.to_s or w.to_s.length >= 2
+				new_array << w.to_s
+			end
+		end
+		return new_array.join(" ")
+	end
+
 	def check_point_distance(local, source)
 		geographic_factory = RGeo::Geographic.spherical_factory
 		point_source = geographic_factory.point(source.lng, source.lat)
@@ -307,5 +409,16 @@ class PoisController < ApplicationController
 			results_name += " " if i > 0 
 		end
 		results_name
+	end
+
+	def copy_generic_poi lifecooler, local
+		local.nome = lifecooler.nome
+		local.descricao = lifecooler.descricao
+		local.horario = lifecooler.horario
+		local.url_imagem = lifecooler.url_imagem
+		local.website = lifecooler.website
+		local.telefone = lifecooler.telefone
+		local.distrito = 35
+		local
 	end
 end

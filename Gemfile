@@ -35,7 +35,14 @@ gem 'scalpel'
 gem 'stanford-core-nlp'
 
 gem 'classifier'
+gem 'acts_as_indexed'
 
+gem 'sunspot_rails'
+gem 'sunspot_solr' # optional pre-packaged Solr distribution for use in development
+
+gem 'treat'
+gem 'ferret'
+gem 'madeleine'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
