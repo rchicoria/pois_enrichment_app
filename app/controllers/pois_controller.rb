@@ -21,10 +21,9 @@ class PoisController < ApplicationController
 		if params[:s]
 			puts @district
 			search = Sunspot.search(LifeCoolerPoi,Local) do
-				fulltext params[:s] #do
-					#boost(2.0) { with(:location).in_radius(params[:lat].to_f, param[:lon].to_f, 4, :bbox => true) }
-					#boost(4.0) { with(:location).in_radius(params[:lat].to_f, param[:lon].to_f, 2, :bbox => true) }
-				#end
+				fulltext params[:s] do
+					minimum_match 1
+				end
 			end
 			@pois = search.results
 			seen = []
