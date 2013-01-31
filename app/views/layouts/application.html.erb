@@ -40,7 +40,7 @@
 					</a>
 					<ul id="dropdown-district" class="dropdown-menu" style="max-height: 300px; overflow-y: auto">
 						<% @districts.each do |district| %>
-							<li><a href="?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
+							<li><a href="/pois?district=<%= district.id %>&category=<%= @category %>"><%= district.name %></a></li>
 						<% end %>
 					</ul>
 				</li>
@@ -50,13 +50,16 @@
 						<b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="?district=<%= @district %>&category=Top">Top</a></li>
-						<li><a href="?district=<%= @district %>&category=Restaurantes">Restaurantes</a></li>
-						<li><a href="?district=<%= @district %>&category=Bares">Bares</a></li>
-						<li><a href="?district=<%= @district %>&category=Monumentos">Monumentos</a></li>
-						<li><a href="?district=<%= @district %>&category=Cultura">Cultura</a></li>
-						<li><a href="?district=<%= @district %>&category=Praias">Praias</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Top">Top</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Restaurantes">Restaurantes</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Bares">Bares</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Monumentos">Monumentos</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Cultura">Cultura</a></li>
+						<li><a href="/pois?district=<%= @district %>&category=Praias">Praias</a></li>
 					</ul>
+				</li>
+				<li id="sobre" class="option">
+					<a class="option" href="/sobre_nos?district=<%= @district %>&category=<%= @category %>">Sobre nós</a>
 				</li>
 			</ul>
 			<ul class="menu" style="float: right">
@@ -88,6 +91,8 @@
 	</script>
 
 	<%= yield %>
+	
+	<p style="text-align: center">Todos os direitos reservados. Aplicação integrada na plataforma <a href="http://www.ost.pt" target="_blank">One.Stop.Transport</a> do projecto <a href="http://tice.mobilidade.ipn.pt" target="_blank">TICE.Mobilidade</a>.</p>
 
 	<!-- Adicione ao final da sua página, antes da tag </body>, e substitua <your-app-id> -->
 	<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>-->

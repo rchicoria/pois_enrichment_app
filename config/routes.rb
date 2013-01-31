@@ -20,6 +20,7 @@ PoisEnrichmentApp::Application.routes.draw do
   match 'checkin' => 'pois#checkin'
   match 'checkin_lc' => 'pois#checkin_lc'
   match 'pois_lc' => 'pois#pois_lc'
+  match 'sobre_nos' => 'home#about'
 
   # Sample resource route with options:
   #   resources :products do
